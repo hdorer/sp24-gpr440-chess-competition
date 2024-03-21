@@ -3,8 +3,9 @@
 #include <string>
 
 int main() {
+    BrainRot bot;
     std::string fen;
     getline(std::cin, fen);
-    auto move = ChessSimulator::Move(fen);
+    std::string move = bot.getNextMove(fen);
     std::cout << move << std::endl;
 }
