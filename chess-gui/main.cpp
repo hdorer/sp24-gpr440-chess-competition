@@ -70,11 +70,11 @@ void move(chess::Board& board, BrainRot& bot) {
     std::chrono::steady_clock::time_point beforeTime = std::chrono::high_resolution_clock::now();
 
     // run!
-    std::string moveStr = bot.getNextMove(board.getFen(true));
+    chess::Move move = bot.getNextMove(board);
+    std::string moveStr = chess::uci::moveToUci(move);
     // get stats
     std::chrono::steady_clock::time_point afterTime = std::chrono::high_resolution_clock::now();
-    // apply move
-    chess::Move move = chess::uci::uciToMove(board, moveStr);
+
     board.makeMove(move);
 
     // update stats
@@ -193,7 +193,7 @@ int main(int argc, char* argv[]) {
     // Event loop
     while (!done) {
         if (simulationState == SimulationState::RUNNING)
-            bot.getNextMove(board.getFen(true));
+            move(board, bot);
 
         SDL_Event event;
 

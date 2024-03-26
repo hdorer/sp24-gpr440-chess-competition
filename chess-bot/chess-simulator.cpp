@@ -16,7 +16,7 @@ BrainRot::BrainRot() {
 	};
 }
 
-std::string BrainRot::getNextMove(std::string fen) {
+chess::Move BrainRot::getNextMove(chess::Board& board) {
 	// create your board based on the board string following the FEN notation
 	// search for the best move using minimax / monte carlo tree search /
 	// alpha-beta pruning / ... try to use nice heuristics to speed up the search
@@ -24,19 +24,27 @@ std::string BrainRot::getNextMove(std::string fen) {
 	// extra points if you create your own board/move representation instead of
 	// using the one provided by the library
 
-	// here goes a random movement
+	chess::Move move = makeMove(board);
+	return move;
+}
+
+chess::Move BrainRot::getNextMove(std::string fen) {
 	chess::Board board(fen);
+	chess::Move move = makeMove(board);
+	return move;
+}
+
+chess::Move BrainRot::makeMove(chess::Board& board) {
 	chess::Movelist moves;
 	chess::movegen::legalmoves(moves, board);
-	if(moves.size() == 0)
-	return "";
-
-	
+	if (moves.size() == 0) {
+		return chess::Move();
+	}
 
 	// get random move
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dist(0, moves.size() - 1);
 	chess::Move move = moves[dist(gen)];
-	return chess::uci::moveToUci(move);
+	return move;
 }
