@@ -5,6 +5,17 @@
 #include <random>
 
 
+BrainRot::BrainRot() {
+	pieceValues = {
+		{ chess::PieceGenType::PAWN, 1 },
+		{ chess::PieceGenType::BISHOP, 3 },
+		{ chess::PieceGenType::KNIGHT, 3 },
+		{ chess::PieceGenType::ROOK, 5 },
+		{ chess::PieceGenType::QUEEN, 9 },
+		{ chess::PieceGenType::KING, 100 }
+	};
+}
+
 std::string BrainRot::getNextMove(std::string fen) {
 	// create your board based on the board string following the FEN notation
 	// search for the best move using minimax / monte carlo tree search /
@@ -19,6 +30,8 @@ std::string BrainRot::getNextMove(std::string fen) {
 	chess::movegen::legalmoves(moves, board);
 	if(moves.size() == 0)
 	return "";
+
+	
 
 	// get random move
 	std::random_device rd;
