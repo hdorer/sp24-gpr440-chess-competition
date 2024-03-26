@@ -193,7 +193,7 @@ int main(int argc, char* argv[]) {
     // Event loop
     while (!done) {
         if (simulationState == SimulationState::RUNNING)
-            move(board);
+            bot.getNextMove(board.getFen(true));
 
         SDL_Event event;
 
@@ -235,7 +235,7 @@ int main(int argc, char* argv[]) {
         ImGui::SameLine();
         if (ImGui::Button("Step")) {
             simulationState = SimulationState::PAUSED;
-            move(board);
+            move(board, bot);
         }
         ImGui::Separator();
         // statistics
