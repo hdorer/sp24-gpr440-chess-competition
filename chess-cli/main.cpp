@@ -111,6 +111,11 @@ void setPosition(std::string input, BrainRot& bot, chess::Board& board, PGNBuild
     }
 }
 
+void evaluatePosition(BrainRot& bot, chess::Board& board) {
+    float positionScore = bot.evaluatePosition(board);
+    std::cout << "Current position score: " << positionScore << std::endl;
+}
+
 int main() {
     srand(time(NULL));
 
@@ -162,6 +167,10 @@ int main() {
             if (stringStartsWith(input, "setposition")) {
                 setPosition(input, bot, board, pgn, side);
                 std::cin.ignore();
+                continue;
+            }
+            if (input == "evaluate") {
+                evaluatePosition(bot, board);
                 continue;
             }
 

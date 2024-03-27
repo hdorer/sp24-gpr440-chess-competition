@@ -1,4 +1,5 @@
 #include "chess-simulator.h"
+
 // disservin's lib. drop a star on his hard work!
 // https://github.com/Disservin/chess-library
 #include "chess.hpp"
@@ -7,12 +8,12 @@
 
 BrainRot::BrainRot() {
 	pieceValues = {
-		{ chess::PieceGenType::PAWN, 1 },
-		{ chess::PieceGenType::BISHOP, 3 },
-		{ chess::PieceGenType::KNIGHT, 3 },
-		{ chess::PieceGenType::ROOK, 5 },
-		{ chess::PieceGenType::QUEEN, 9 },
-		{ chess::PieceGenType::KING, 100 }
+		{ chess::PieceType::PAWN, 1 },
+		{ chess::PieceType::BISHOP, 3 },
+		{ chess::PieceType::KNIGHT, 3 },
+		{ chess::PieceType::ROOK, 5 },
+		{ chess::PieceType::QUEEN, 9 },
+		{ chess::PieceType::KING, 0 }
 	};
 }
 
@@ -24,7 +25,7 @@ void BrainRot::setSide(bool side) {
 	this->side = side ? chess::Color::WHITE : chess::Color::BLACK;
 }
 
-bool BrainRot::isWhite() {
+bool BrainRot::isWhite() const {
 	return side == chess::Color::WHITE;
 }
 
@@ -48,4 +49,25 @@ chess::Move BrainRot::getNextMove(chess::Board& board) {
 	std::uniform_int_distribution<> dist(0, moves.size() - 1);
 	chess::Move move = moves[dist(gen)];
 	return move;
+}
+
+float BrainRot::evaluatePosition(chess::Board& board) {
+	float material = 0;
+	for (std::map<chess::PieceType, int>::iterator it = pieceValues.begin(); it != pieceValues.end(); ++it) {
+		chess::Bitboard pieceBitboard = board.pieces(it->first, side);
+		uint64_t pieceBits = pieceBitboard.getBits();
+
+		uint64_t bitIncr = 1;
+		int numPieces = 0;
+		int i = 0; // use this variable to prevent infinite loops by hard capping the loop at 64 iterations
+		while (bitIncr <= pieceBits && i < 64) {
+			numPieces += (pieceBits & bitIncr) != 0;
+			bitIncr <<= 1;
+			i++;
+		}
+
+		material += (float)(numPieces * it->second);
+	}
+
+	return material;
 }
