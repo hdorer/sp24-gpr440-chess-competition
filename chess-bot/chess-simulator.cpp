@@ -16,6 +16,18 @@ BrainRot::BrainRot() {
 	};
 }
 
+chess::Color BrainRot::getSide() const {
+	return side;
+}
+
+void BrainRot::setSide(bool side) {
+	this->side = side ? chess::Color::WHITE : chess::Color::BLACK;
+}
+
+bool BrainRot::isWhite() {
+	return side == chess::Color::WHITE;
+}
+
 chess::Move BrainRot::getNextMove(chess::Board& board) {
 	// create your board based on the board string following the FEN notation
 	// search for the best move using minimax / monte carlo tree search /
@@ -24,11 +36,6 @@ chess::Move BrainRot::getNextMove(chess::Board& board) {
 	// extra points if you create your own board/move representation instead of
 	// using the one provided by the library
 
-	chess::Move move = makeMove(board);
-	return move;
-}
-
-chess::Move BrainRot::makeMove(chess::Board& board) {
 	chess::Movelist moves;
 	chess::movegen::legalmoves(moves, board);
 	if (moves.size() == 0) {
