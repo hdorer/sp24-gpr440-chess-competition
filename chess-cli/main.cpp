@@ -50,6 +50,10 @@ struct CLISettings {
 };
 
 
+bool stringStartsWith(std::string string, std::string prefix) {
+    return string.size() >= prefix.size() && std::equal(prefix.begin(), prefix.end(), string.begin());
+}
+
 bool chooseSide() {
     while (true) {
         std::cout << "*w*hite\n"
@@ -60,9 +64,9 @@ bool chooseSide() {
         std::cin >> choice;
         switch (choice) {
         case 'w':
-            return true;
-        case 'b':
             return false;
+        case 'b':
+            return true;
         case 'r':
             int flip = rand() % 2;
             return flip;
@@ -76,6 +80,28 @@ void brainRotMove(BrainRot& bot, chess::Board& board) {
     std::cout << "Brain Rot's move: " << moveStr << std::endl;
 
     board.makeMove(move);
+}
+
+void setPosition(std::string input, BrainRot& bot, chess::Board& board) {
+    std::string oldFen = board.getFen();
+    std::string fen = input.substr(std::string("setposition ").size());
+    board.setFen(fen);
+
+    if (board.pieces(chess::PieceType::KING, chess::Color::WHITE) == chess::Bitboard(0) || board.pieces(chess::PieceType::KING, chess::Color::WHITE) == chess::Bitboard(0) || board.inCheck()) {
+        std::cout << "Invalid FEN!" << std::endl;
+        board.setFen(oldFen);
+        return;
+    }
+
+    // std::cin.ignore();
+    bool side = chooseSide();
+    std::cout << "Player playing as: " << (side ? "black" : "white") << "\n"
+        << "Brain Rot playing as: " << (side ? "white" : "black") << std::endl;
+
+    chess::Color color = side ? chess::Color::WHITE : chess::Color::BLACK;
+    if (color == board.sideToMove()) {
+        brainRotMove(bot, board);
+    }
 }
 
 int main() {
@@ -94,7 +120,6 @@ int main() {
     chess::Board board(chess::constants::STARTPOS);
 
     bool side = chooseSide();
-
     std::cout << "Player playing as: " << (side ? "black" : "white") << "\n"
         << "Brain Rot playing as: " << (side ? "white" : "black") << std::endl;
 
@@ -117,6 +142,11 @@ int main() {
             }
             if (input == "settings") {
                 settings.menu();
+                std::cin.ignore();
+                continue;
+            }
+            if (stringStartsWith(input, "setposition")) {
+                setPosition(input, bot, board);
                 std::cin.ignore();
                 continue;
             }
