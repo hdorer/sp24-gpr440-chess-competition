@@ -2,6 +2,7 @@
 #include "chess.hpp"
 #include <cstdlib>
 #include "magic_enum/magic_enum.hpp"
+#include "PGNBuilder.h"
 #include <string>
 
 
@@ -75,15 +76,20 @@ bool chooseSide() {
     }
 }
 
-void brainRotMove(BrainRot& bot, chess::Board& board) {
+void brainRotMove(BrainRot& bot, chess::Board& board, PGNBuilder& pgn, bool saySide = false) {
     chess::Move move = bot.getNextMove(board);
+    pgn.addMove(board, move);
     std::string moveStr = chess::uci::moveToSan(board, move);
-    std::cout << "Brain Rot's move: " << moveStr << std::endl;
+    if (saySide) {
+        std::cout << "Brain Rot's move as " << bot.getSide() << ": " << moveStr << std::endl;
+    } else {
+        std::cout << "Brain Rot's move: " << moveStr << std::endl;
+    }
 
     board.makeMove(move);
 }
 
-void setPosition(std::string input, BrainRot& bot, chess::Board& board, bool& side) {
+void setPosition(std::string input, BrainRot& bot, chess::Board& board, PGNBuilder& pgn, bool& side) {
     std::string oldFen = board.getFen();
     std::string fen = input.substr(std::string("setposition ").size());
     board.setFen(fen);
@@ -101,7 +107,7 @@ void setPosition(std::string input, BrainRot& bot, chess::Board& board, bool& si
         << "Brain Rot playing as: " << (side ? "white" : "black") << std::endl;
 
     if (bot.getSide() == board.sideToMove()) {
-        brainRotMove(bot, board);
+        brainRotMove(bot, board, pgn);
     }
 }
 
@@ -117,16 +123,19 @@ int main() {
         << "-------------------------------------------------------------------" << std::endl;
 
     BrainRot bot;
-    CLISettings settings;
     chess::Board board(chess::constants::STARTPOS);
+    CLISettings settings;
+    PGNBuilder pgn;
 
-    bool side = chooseSide();
+    settings.changePlaySelf();
+
+    bool side = settings.playSelf ? true : chooseSide();
     bot.setSide(side);
     std::cout << "Player playing as: " << (side ? "black" : "white") << "\n"
         << "Brain Rot playing as: " << (side ? "white" : "black") << std::endl;
 
-    if (side) {
-        brainRotMove(bot, board);
+    if (side && !settings.playSelf) {
+        brainRotMove(bot, board, pgn);
     }
 
     std::cin.ignore();
@@ -151,28 +160,32 @@ int main() {
                 continue;
             }
             if (stringStartsWith(input, "setposition")) {
-                setPosition(input, bot, board, side);
+                setPosition(input, bot, board, pgn, side);
                 std::cin.ignore();
                 continue;
             }
 
             try {
                 chess::Move playerMove = chess::uci::parseSan(board, input);
+                pgn.addMove(board, playerMove);
                 board.makeMove(playerMove);
             } catch (chess::uci::SanParseError e) {
                 std::cout << "Invalid SAN!" << std::endl;
                 continue;
             }
 
-            brainRotMove(bot, board);
+            brainRotMove(bot, board, pgn);
         } else {
-            brainRotMove(bot, board);
+            brainRotMove(bot, board, pgn, true);
+            side = !side;
+            bot.setSide(side);
         }
 
         std::pair<chess::GameResultReason, chess::GameResult> result = board.isGameOver();
         if (result.second != chess::GameResult::NONE || result.first != chess::GameResultReason::NONE) {
             std::string resultStr = std::string(magic_enum::enum_name(result.second)) + " " + std::string(magic_enum::enum_name(result.first));
             std::cout << "GAME OVER: " << resultStr << std::endl;
+            std::cout << "Full PGN: " << pgn << std::endl;
             return 0;
         }
     }
