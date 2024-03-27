@@ -7,7 +7,6 @@ class BrainRot {
 public:
 	BrainRot();
 	chess::Move getNextMove(chess::Board& board);
-	chess::Move getNextMove(std::string fen);
 
 private:
 	std::map<chess::PieceGenType, int> pieceValues;

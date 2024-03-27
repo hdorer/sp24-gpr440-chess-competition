@@ -28,12 +28,6 @@ chess::Move BrainRot::getNextMove(chess::Board& board) {
 	return move;
 }
 
-chess::Move BrainRot::getNextMove(std::string fen) {
-	chess::Board board(fen);
-	chess::Move move = makeMove(board);
-	return move;
-}
-
 chess::Move BrainRot::makeMove(chess::Board& board) {
 	chess::Movelist moves;
 	chess::movegen::legalmoves(moves, board);
