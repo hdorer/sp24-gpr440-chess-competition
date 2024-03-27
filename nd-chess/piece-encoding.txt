@@ -1,0 +1,24 @@
+Bit numbering: 8|7|6|5|4|3|2|1
+
+Bit 1: Color
+	0: black
+	1: white
+
+Bits 2-4: Piece Type
+	0: pawn
+	1: knight
+	2: bishop
+	3: rook
+	4: queen
+	5: king
+	6: en passant pawn (hopefully I can save this for later)
+
+For king only:
+	Bit 5: In Check?
+		0: no
+		1: yes
+	Bits 6-7: Castling Rights (probably won't be dealing with this now)
+		0: cannot castle
+		1: can short castle
+		2: can long castle
+		3: can castle both ways
