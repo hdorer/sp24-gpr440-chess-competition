@@ -2,49 +2,24 @@
 
 #include <iostream>
 #include <stdint.h>
+#include "Types.h"
 
 
 namespace NDChess {
 	class Square {
 	public:
-		enum class ColorBit : uint8_t{
-			BLACK = 0,
-			WHITE = 1
-		};
-
-		enum class PieceTypeBit : uint8_t {
-			PAWN = 0,
-			KNIGHT = 2,
-			BISHOP = 4,
-			ROOK = 6,
-			QUEEN = 8,
-			KING = 10,
-			EN_PASSANT_PAWN = 12
-		};
-
-		// i guess i'm not going to have classes for each piece
-		enum class InCheckBit : uint8_t {
-			NO = 0,
-			YES = 16
-		};
-
-		enum class PieceHereBit: uint8_t{
-			NO = 0,
-			YES = 128
-		};
-
 		Square() : data(128) { }
 
-		ColorBit getColor() const;
-		PieceTypeBit getPieceType() const;
-		InCheckBit getInCheck() const;
-		bool isPieceHere() const;
-		void setColor(ColorBit color);
-		void setPieceType(PieceTypeBit type);
+		ColorBit getColor() const { return (ColorBit)(data & COLOR_MASK); }
+		PieceTypeBit getPieceType() const { return (PieceTypeBit)(data & PIECE_TYPE_MASK); }
+		InCheckBit getInCheck() const { return (InCheckBit)(data & IN_CHECK_MASK); }
+		bool isPieceHere() const { return (bool)(data & PIECE_HERE_MASK); }
+		void setColor(ColorBit color) { data = (data & ~COLOR_MASK) | (uint8_t)color; }
+		void setPieceType(PieceTypeBit type) { data = (data & ~PIECE_TYPE_MASK) | (uint8_t)type; }
 		void setInCheck(InCheckBit inCheck);
-		void setPieceHere(PieceHereBit pieceHere);
+		void setPieceHere(PieceHereBit pieceHere) { data - (data & ~PIECE_HERE_MASK) | (uint8_t)pieceHere; }
 
-		friend std::ostream& operator<<(std::ostream& os, Square& rhs);
+		friend std::ostream& operator<<(std::ostream& os, const Square& rhs);
 	private:
 		uint8_t data;
 
