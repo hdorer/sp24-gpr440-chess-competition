@@ -11,7 +11,7 @@ namespace NDChess {
 	}
 
 	std::ostream& operator<<(std::ostream& os, const Square& rhs) {
-		char display = '-';
+		char display = '.';
 
 		if (rhs.isPieceHere()) {
 			switch (rhs.getPieceType()) {

@@ -8,7 +8,7 @@
 namespace NDChess {
 	class Square {
 	public:
-		Square() : data(128) { }
+		Square() : data(0) { }
 
 		ColorBit getColor() const { return (ColorBit)(data & COLOR_MASK); }
 		PieceTypeBit getPieceType() const { return (PieceTypeBit)(data & PIECE_TYPE_MASK); }
@@ -18,6 +18,10 @@ namespace NDChess {
 		void setPieceType(PieceTypeBit type) { data = (data & ~PIECE_TYPE_MASK) | (uint8_t)type; }
 		void setInCheck(InCheckBit inCheck);
 		void setPieceHere(PieceHereBit pieceHere) { data - (data & ~PIECE_HERE_MASK) | (uint8_t)pieceHere; }
+
+		void clear() { data = 0; }
+
+		void makePiece(PieceTypeBit type, ColorBit color) { data = (uint8_t)PieceHereBit::YES | (uint8_t)type | (uint8_t)color; }
 
 		friend std::ostream& operator<<(std::ostream& os, const Square& rhs);
 	private:
