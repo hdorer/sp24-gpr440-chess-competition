@@ -11,7 +11,7 @@ int ndchess_implementation() {
         << "-------------------------------------------------------------------" << std::endl;
 
 	NDChess::Board board;
-    board.setPositionFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    board.setPositionFromFen("r1bqrnk1/2p3p1/np1p1p2/pN1Pp1p1/1PP1P3/P3B1PP/3Q1PB1/R4RK1 w - - 2 21");
     std::cout << board << std::endl;
 	
 	return 0;

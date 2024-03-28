@@ -23,10 +23,7 @@ namespace NDChess {
 			switch (state) {
 			case 0:
 				if (data[i] >= 48 && data[i] <= 57) {
-					for (int j = data[i] - 48; j > 0; j--) {
-						squares[rank * 8 + file].clear();
-						file++;
-					}
+					file += data[i] - 48;
 				} else {
 					switch (data[i]) {
 					case '/':
@@ -82,9 +79,6 @@ namespace NDChess {
 						file++;
 						break;
 					case ' ':
-						if (!(rank == 0 && file == 7)) {
-							std::cout << "We reached the end of the state, but we don't seem to have covered every square!" << std::endl;
-						}
 						state++;
 						break;
 					}
@@ -104,10 +98,15 @@ namespace NDChess {
 	}
 
 	std::ostream& operator<<(std::ostream& os, const Board& rhs) {
-		for (int i = 0; i < Board::NUM_SQUARES - 1; i++) {
-			os << rhs.squares[Board::NUM_SQUARES - 1 - i];
+		int rank = 7;
+		int file = 0;
+		for (int i = 0; i < Board::NUM_SQUARES; i++) {
+			os << rhs.squares[rank * 8 + file];
+			file++;
 			if (i != 0 && i % 8 == 7) {
 				os << std::endl;
+				rank--;
+				file = 0;
 			}
 		}
 		return os;

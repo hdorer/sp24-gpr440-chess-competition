@@ -21,7 +21,7 @@ namespace NDChess {
 
 		void clear() { data = 0; }
 
-		void makePiece(PieceTypeBit type, ColorBit color) { data = (uint8_t)PieceHereBit::YES | (uint8_t)type | (uint8_t)color; }
+		void makePiece(PieceTypeBit type, ColorBit color);
 
 		friend std::ostream& operator<<(std::ostream& os, const Square& rhs);
 	private:
