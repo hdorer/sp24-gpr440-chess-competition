@@ -38,7 +38,7 @@ namespace NDChess {
 						file++;
 						break;
 					case 'n':
-						squares[rank * 8 + file].makePiece(PieceTypeBit::ROOK, ColorBit::BLACK);
+						squares[rank * 8 + file].makePiece(PieceTypeBit::KNIGHT, ColorBit::BLACK);
 						file++;
 						break;
 					case 'b':
@@ -104,8 +104,8 @@ namespace NDChess {
 	}
 
 	std::ostream& operator<<(std::ostream& os, const Board& rhs) {
-		for (int i = Board::NUM_SQUARES; i > 0; i--) {
-			os << rhs.squares[i];
+		for (int i = 0; i < Board::NUM_SQUARES - 1; i++) {
+			os << rhs.squares[Board::NUM_SQUARES - 1 - i];
 			if (i != 0 && i % 8 == 7) {
 				os << std::endl;
 			}
