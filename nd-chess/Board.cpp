@@ -1,5 +1,7 @@
 #include "Board.h"
 
+#include <sstream>
+
 
 namespace NDChess {
 	Board::Board() : sideToMove(ColorBit::WHITE), squares{
@@ -11,7 +13,9 @@ namespace NDChess {
 		0, 0, 0, 0, 0, 0, 0, 0,
 		128, 128, 128, 128, 128, 128, 128, 128,
 		134, 130, 132, 136, 138, 132, 130, 134
-	} {	}
+	} {
+		makePiece(0, PieceTypeBit::EN_PASSANT_PAWN, ColorBit::WHITE);
+	}
 	
 	void Board::clear() {
 		for (int i = 0; i < NUM_SQUARES; i++) {
@@ -33,6 +37,9 @@ namespace NDChess {
 		int file = 0;
 		uint8_t whiteCastlingRights = 0;
 		uint8_t blackCastlingRights = 0;
+		int enPassantFile = -1;
+		int enPassantRank = -1;
+		ColorBit enPassantColor = ColorBit::NOPIECE;
 		char* data = fen.data();
 
 		clear();
@@ -43,8 +50,8 @@ namespace NDChess {
 
 			switch (state) {
 			case 0:
-				if (current >= 48 && current <= 57) {
-					file += current - 48;
+				if (current >= '1' && current <= '8') {
+					file += current - '0';
 				} else {
 					switch (current) {
 					case '/':
@@ -144,6 +151,34 @@ namespace NDChess {
 				}
 				
 				break;
+			case 3:
+				if (current >= 'a' && current <= 'h') {
+					enPassantFile = current - 'a';
+				} else {
+					switch (current) {
+					// no case for '-', since the next character is guaranteed to be ' ' in that case, and the ' ' case will place the en passant pawn on the appropriate square, if one exists
+					// i can include cases to set the rank here, because en passant spawns can only ever appear on one of two ranks
+					case '3':
+						enPassantColor = ColorBit::WHITE;
+						enPassantRank = 2;
+						break;
+					case '6':
+						enPassantColor = ColorBit::BLACK;
+						enPassantRank = 5;
+						break;
+					case ' ':
+						if (enPassantColor == ColorBit::NOPIECE || enPassantRank == -1 || enPassantFile == -1) {
+							state++;
+							break;
+						}
+
+						makePiece(enPassantRank * 8 + enPassantFile, PieceTypeBit::EN_PASSANT_PAWN, enPassantColor);
+						state++;
+						break;
+					}
+				}
+
+				break;
 			}
 
 			if (state > 3) {
@@ -154,14 +189,40 @@ namespace NDChess {
 		}
 	}
 	
-	void Board::printRawView() {
-		std::cout << "(Note: Ranks are drawn in reverse order in raw view)" << std::endl;
+	std::string Board::rawView() {
+		std::stringstream rawViewStream;
+		rawViewStream << "(Note: Ranks are drawn in reverse order in raw view)" << std::endl;
+
 		for (int i = 0; i < NUM_SQUARES; i++) {
-			std::cout << (int)(squares[i]) << "|";
+			rawViewStream << (int)(squares[i]) << "|";
 			if (i != 0 && i % 8 == 7) {
-				std::cout << std::endl;
+				rawViewStream << std::endl;
 			}
 		}
+
+		return rawViewStream.str();
+	}
+
+	std::string Board::pieceToString(int index) {
+		if (index < 0 || index >= NUM_SQUARES) {
+			return "None";
+		}
+
+		if (!isPieceHere(index)) {
+			return "None";
+		}
+
+		std::stringstream pieceStream;
+
+		pieceStream << "Color: " << bitToString(getColor(index));
+		PieceTypeBit type = getPieceType(index);
+		pieceStream << " | Type: " << bitToString(type);
+		if (type == PieceTypeBit::KING) {
+			pieceStream << " | " << bitToString(getInCheck(index));
+			pieceStream << " | " << bitToString(getCastlingRights(index));
+		}
+
+		return pieceStream.str();
 	}
 
 	bool Board::isPieceHere(int index) const {
@@ -192,6 +253,38 @@ namespace NDChess {
 			return PieceTypeBit::NOPIECE;
 		}
 		return (PieceTypeBit)(squares[index] & PIECE_TYPE_MASK);
+	}
+
+	InCheckBit Board::getInCheck(int index) const {
+		if (index < 0 || index >= NUM_SQUARES) {
+			return InCheckBit::NOTKING;
+		}
+
+		if (!isPieceHere(index)) {
+			return InCheckBit::NOTKING;
+		}
+
+		if (getPieceType(index) != PieceTypeBit::KING) {
+			return InCheckBit::NOTKING;
+		}
+
+		return (InCheckBit)(squares[index] & IN_CHECK_MASK);
+	}
+
+	CastlingRightsBit Board::getCastlingRights(int index) const {
+		if (index < 0 || index >= NUM_SQUARES) {
+			return CastlingRightsBit::NOTKING;
+		}
+
+		if (!isPieceHere(index)) {
+			return CastlingRightsBit::NOTKING;
+		}
+
+		if (getPieceType(index) != PieceTypeBit::KING) {
+			return CastlingRightsBit::NOTKING;
+		}
+
+		return (CastlingRightsBit)(squares[index] & CASTLING_RIGHTS_MASK);
 	}
 
 	void Board::setCastlingRights(int index, CastlingRightsBit rights) {
@@ -231,10 +324,9 @@ namespace NDChess {
 			return;
 		}
 
-		uint8_t pieceHereVal = (uint8_t)PieceHereBit::YES;
 		uint8_t typeVal = (uint8_t)type;
 		uint8_t colorVal = (uint8_t)color;
-		squares[index] = pieceHereVal | typeVal | colorVal;
+		squares[index] = PIECE_HERE_MASK | typeVal | colorVal;
 	}
 
 	char Board::squareChar(int index) const {
@@ -265,6 +357,8 @@ namespace NDChess {
 			case PieceTypeBit::KING:
 				display = 'k';
 				break;
+			case PieceTypeBit::EN_PASSANT_PAWN:
+				return '.';
 			}
 
 			if ((squares[index] & 1) == 1) {
@@ -273,17 +367,6 @@ namespace NDChess {
 		}
 
 		return display;
-	}
-
-	std::string Board::bitToString(ColorBit color) {
-		switch (color) {
-		case ColorBit::NOPIECE:
-			return "none";
-		case ColorBit::WHITE:
-			return "white";
-		case ColorBit::BLACK:
-			return "black";
-		}
 	}
 
 	std::ostream& operator<<(std::ostream& os, const Board& rhs) {

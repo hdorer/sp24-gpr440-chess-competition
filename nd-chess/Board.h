@@ -1,33 +1,39 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 #include "Types.h"
 
 
 namespace NDChess {
 	class Board {
 	public:
+		static const int NUM_SQUARES = 64;
+
 		Board();
 
 		void clear();
 		void clear(int index);
 		void setPositionFromFen(std::string fen);
-		void printRawView();
+		
+		std::string rawView();
+		std::string pieceToString(int index);
 
 		bool isPieceHere(int index) const;
 		ColorBit getColor(int index) const;
 		PieceTypeBit getPieceType(int index) const;
+		InCheckBit getInCheck(int index) const;
+		CastlingRightsBit getCastlingRights(int index) const;
 	private:
-		static const int NUM_SQUARES = 64;
 		uint8_t squares[NUM_SQUARES];
 
 		ColorBit sideToMove;
-
-		const uint8_t COLOR_MASK = 1 << 0;
-		const uint8_t PIECE_TYPE_MASK = 1 << 1 | 1 << 2 | 1 << 3;
-		const uint8_t IN_CHECK_MASK = 1 << 4;
-		const uint8_t CASTLING_RIGHTS_MASK = 1 << 5 | 1 << 6;
-		const uint8_t PIECE_HERE_MASK = 1 << 7;
+	
+		const uint8_t COLOR_MASK = 1;
+		const uint8_t PIECE_TYPE_MASK = 14;
+		const uint8_t IN_CHECK_MASK = 16;
+		const uint8_t CASTLING_RIGHTS_MASK = 96;
+		const uint8_t PIECE_HERE_MASK = 128;
 
 		void setCastlingRights(int index, CastlingRightsBit rights);
 		
@@ -35,8 +41,6 @@ namespace NDChess {
 		
 		void makePiece(int index, PieceTypeBit type, ColorBit bit);
 		char squareChar(int index) const;
-		
-		std::string bitToString(ColorBit color);
 
 		friend std::ostream& operator<<(std::ostream& os, const Board& rhs);
 	};

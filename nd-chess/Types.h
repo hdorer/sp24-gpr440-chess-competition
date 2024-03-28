@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <string>
 
 
 namespace NDChess {
@@ -9,6 +10,8 @@ namespace NDChess {
 		BLACK = 0,
 		WHITE = 1
 	};
+
+	std::string bitToString(ColorBit color);
 
 	enum class PieceTypeBit : uint8_t {
 		NOPIECE = -1,
@@ -21,14 +24,17 @@ namespace NDChess {
 		EN_PASSANT_PAWN = 12
 	};
 
-	// i guess i'm not going to have classes for each piece
+	std::string bitToString(PieceTypeBit type);
+
 	enum class InCheckBit : uint8_t {
 		NOTKING = -1,
 		NO = 0,
 		YES = 16
 	};
 
-	enum CastlingRightsBit : uint8_t {
+	std::string bitToString(InCheckBit inCheck);
+
+	enum class CastlingRightsBit: uint8_t{
 		NOTKING = -1,
 		NO_CASTLE = 0,
 		SHORT_CASTLE = 32,
@@ -36,8 +42,5 @@ namespace NDChess {
 		BOTH_CASTLES = 96
 	};
 
-	enum class PieceHereBit : uint8_t {
-		NO = 0,
-		YES = 128
-	};
+	std::string bitToString(CastlingRightsBit rights);
 }
