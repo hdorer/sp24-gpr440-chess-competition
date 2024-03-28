@@ -14,7 +14,7 @@ namespace NDChess {
 		void setPositionFromFen(std::string fen);
 		void printRawView();
 
-		bool isPieceHere(int index) const { return (bool)(squares[index] & PIECE_HERE_MASK); }
+		bool isPieceHere(int index) const;
 		ColorBit getColor(int index) const;
 		PieceTypeBit getPieceType(int index) const;
 	private:

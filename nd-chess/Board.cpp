@@ -20,6 +20,10 @@ namespace NDChess {
 	}
 
 	void Board::clear(int index) {
+		if (index < 0 || index >= NUM_SQUARES) {
+			return;
+		}
+
 		squares[index] = 0;
 	}
 	
@@ -160,7 +164,19 @@ namespace NDChess {
 		}
 	}
 
+	bool Board::isPieceHere(int index) const {
+		if (index < 0 || index >= NUM_SQUARES) {
+			return false;
+		}
+
+		return (bool)(squares[index] & PIECE_HERE_MASK);
+	}
+	
 	ColorBit Board::getColor(int index) const {
+		if (index < 0 || index >= NUM_SQUARES) {
+			return ColorBit::NOPIECE;
+		}
+
 		if (!isPieceHere(index)) {
 			return ColorBit::NOPIECE;
 		}
@@ -168,6 +184,10 @@ namespace NDChess {
 	}
 
 	PieceTypeBit Board::getPieceType(int index) const {
+		if (index < 0 || index >= NUM_SQUARES) {
+			return PieceTypeBit::NOPIECE;
+		}
+
 		if (!isPieceHere(index)) {
 			return PieceTypeBit::NOPIECE;
 		}
@@ -175,6 +195,10 @@ namespace NDChess {
 	}
 
 	void Board::setCastlingRights(int index, CastlingRightsBit rights) {
+		if (index < 0 || index >= NUM_SQUARES) {
+			return;
+		}
+
 		if (!isPieceHere(index)) {
 			return;
 		}
@@ -203,6 +227,10 @@ namespace NDChess {
 	}
 	
 	void Board::makePiece(int index, PieceTypeBit type, ColorBit color) {
+		if (index < 0 || index >= NUM_SQUARES) {
+			return;
+		}
+
 		uint8_t pieceHereVal = (uint8_t)PieceHereBit::YES;
 		uint8_t typeVal = (uint8_t)type;
 		uint8_t colorVal = (uint8_t)color;
@@ -210,6 +238,10 @@ namespace NDChess {
 	}
 
 	char Board::squareChar(int index) const {
+		if (index < 0 || index >= NUM_SQUARES) {
+			return '?';
+		}
+
 		char display = '.';
 
 		if (isPieceHere(index)) {
