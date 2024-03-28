@@ -27,7 +27,9 @@ namespace NDChess {
 		int state = 0;
 		int rank = 7;
 		int file = 0;
-		char* data = fen.data();		
+		uint8_t whiteCastlingRights = 0;
+		uint8_t blackCastlingRights = 0;
+		char* data = fen.data();
 
 		clear();
 
@@ -37,10 +39,10 @@ namespace NDChess {
 
 			switch (state) {
 			case 0:
-				if (data[i] >= 48 && data[i] <= 57) {
-					file += data[i] - 48;
+				if (current >= 48 && current <= 57) {
+					file += current - 48;
 				} else {
-					switch (data[i]) {
+					switch (current) {
 					case '/':
 						rank--;
 						file = 0;
@@ -101,9 +103,47 @@ namespace NDChess {
 
 				break;
 			case 1:
-				
-			case 2:
+				switch (current) {
+				case 'w':
+					sideToMove = ColorBit::WHITE;
+					i++; // the following character is guaranteed to be a space
+					state++;
+					break;
+				case 'b':
+					sideToMove = ColorBit::BLACK;
+					i++; // the following character is guaranteed to be a space
+					state++;
+					break;
+				}
 				break;
+			case 2:
+				switch (current) {
+				// no case for '-', since the next character is guaranteed to be ' ' in that case, and the ' ' case will set the castling rights bits in the appropriate squares to the appropriate value
+				case 'K': // white short castle
+					whiteCastlingRights |= 32;
+					break;
+				case 'Q': // white long castle
+					whiteCastlingRights |= 64;
+					break;
+				case 'k':
+					blackCastlingRights |= 32;
+					break;
+				case 'q':
+					blackCastlingRights |= 64;
+					break;
+				case ' ':
+					setCastlingRights(kingIndex(ColorBit::WHITE), (CastlingRightsBit)whiteCastlingRights);
+					setCastlingRights(kingIndex(ColorBit::BLACK), (CastlingRightsBit)blackCastlingRights);
+					
+					state++;
+					break;
+				}
+				
+				break;
+			}
+
+			if (state > 3) {
+				return;
 			}
 
 			i++;
@@ -134,6 +174,34 @@ namespace NDChess {
 		return (PieceTypeBit)(squares[index] & PIECE_TYPE_MASK);
 	}
 
+	void Board::setCastlingRights(int index, CastlingRightsBit rights) {
+		if (!isPieceHere(index)) {
+			return;
+		}
+
+		if (getPieceType(index) != PieceTypeBit::KING) {
+			return;
+		}
+
+		squares[index] = (squares[index] & ~CASTLING_RIGHTS_MASK) | (uint8_t)rights;
+	}
+	
+	int Board::kingIndex(ColorBit color) const {
+		for (int i = 0; i < NUM_SQUARES; i++) {
+			if (!isPieceHere(i)) {
+				continue;
+			}
+
+			if (getColor(i) != color) {
+				continue;
+			}
+
+			if (getPieceType(i) == PieceTypeBit::KING) {
+				return i;
+			}
+		}
+	}
+	
 	void Board::makePiece(int index, PieceTypeBit type, ColorBit color) {
 		uint8_t pieceHereVal = (uint8_t)PieceHereBit::YES;
 		uint8_t typeVal = (uint8_t)type;
@@ -167,12 +235,23 @@ namespace NDChess {
 				break;
 			}
 
-			if (getColor(index) == ColorBit::WHITE) {
+			if ((squares[index] & 1) == 1) {
 				display -= 32;
 			}
 		}
 
 		return display;
+	}
+
+	std::string Board::bitToString(ColorBit color) {
+		switch (color) {
+		case ColorBit::NOPIECE:
+			return "none";
+		case ColorBit::WHITE:
+			return "white";
+		case ColorBit::BLACK:
+			return "black";
+		}
 	}
 
 	std::ostream& operator<<(std::ostream& os, const Board& rhs) {

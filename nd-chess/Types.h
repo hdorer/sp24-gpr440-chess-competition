@@ -28,8 +28,15 @@ namespace NDChess {
 		YES = 16
 	};
 
-	enum class PieceHereBit : uint8_t {
+	enum CastlingRightsBit : uint8_t {
 		NOTKING = -1,
+		NO_CASTLE = 0,
+		SHORT_CASTLE = 32,
+		LONG_CASTLE = 64,
+		BOTH_CASTLES = 96
+	};
+
+	enum class PieceHereBit : uint8_t {
 		NO = 0,
 		YES = 128
 	};
