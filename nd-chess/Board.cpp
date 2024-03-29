@@ -225,6 +225,41 @@ namespace NDChess {
 		return pieceStream.str();
 	}
 
+	int Board::material(ColorBit color) {
+		int result = 0;
+		
+		for (int i = 0; i < NUM_SQUARES; i++) {
+			if (!isPieceHere(i)) {
+				continue;
+			}
+
+			if (getColor(i) != color) {
+				continue;
+			}
+
+			switch (getPieceType(i)) {
+			case PieceTypeBit::PAWN:
+				result += 1;
+				break;
+			case PieceTypeBit::KNIGHT:
+				result += 3;
+				break;
+			case PieceTypeBit::BISHOP:
+				result += 3;
+				break;
+			case PieceTypeBit::ROOK:
+				result += 5;
+				break;
+			case PieceTypeBit::QUEEN:
+				result += 9;
+				break;
+			// king has invaluable material, and en passant pawns don't count
+			}
+		}
+
+		return result;
+	}
+
 	bool Board::isPieceHere(int index) const {
 		if (index < 0 || index >= NUM_SQUARES) {
 			return false;

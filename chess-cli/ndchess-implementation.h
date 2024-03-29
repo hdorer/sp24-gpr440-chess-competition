@@ -11,10 +11,8 @@ int ndchess_implementation() {
         << "-------------------------------------------------------------------" << std::endl;
 
 	NDChess::Board board;
-    board.setPositionFromFen("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1");
     std::cout << board << std::endl;
-    std::cout << board.rawView() << std::endl;
-    std::cout << board.pieceToString(28) << std::endl;
+    std::cout << board.material(NDChess::ColorBit::WHITE) << std::endl;
 	
 	return 0;
 }
