@@ -20,7 +20,7 @@ namespace NDChess {
 		std::string pieceToString(int index);
 
 		int material(ColorBit color);
-		void evaluatePosition(float& whiteScore, float& blackScore);
+		void evaluatePosition(int& whiteScore, int& blackScore);
 
 		bool isPieceHere(int index) const;
 		ColorBit getColor(int index) const;
