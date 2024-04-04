@@ -260,6 +260,11 @@ namespace NDChess {
 		return result;
 	}
 
+	void Board::evaluatePosition(float& whiteScore, float& blackScore) {
+		whiteScore = (float)material(ColorBit::WHITE);
+		blackScore = (float)material(ColorBit::BLACK);
+	}
+
 	bool Board::isPieceHere(int index) const {
 		if (index < 0 || index >= NUM_SQUARES) {
 			return false;
