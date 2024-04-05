@@ -54,5 +54,10 @@ namespace NDChess {
 		extern int blackKing[64];
 		
 		extern int whitePawn[64];
+		extern int whiteKnight[64];
+		extern int whiteBishop[64];
+		extern int whiteRook[64];
+		extern int whiteQueen[64];
+		extern int whiteKing[64];
 	}
 }

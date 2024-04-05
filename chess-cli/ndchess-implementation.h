@@ -15,11 +15,23 @@ int ndchess_implementation() {
 	/*NDChess::Board board;
     std::cout << board << std::endl;
     std::cout << board.material(NDChess::ColorBit::WHITE) << std::endl;*/
-    
-    std::reverse(std::begin(NDChess::PieceSquareTables::blackPawn), std::end(NDChess::PieceSquareTables::blackPawn));
 
+    int* arr = NDChess::PieceSquareTables::blackKing;
+
+    int rank = 7;
+    int file = 0;
     for (int i = 0; i < 64; i++) {
-        std::cout << NDChess::PieceSquareTables::blackPawn[i] << " ";
+        // this code is so weird
+        bool endOfRank = i % 8 == 7;
+
+        std::cout << arr[rank * 8 + file];
+        std::cout << (i == 63 ? "" : (endOfRank ? ",\n" : ", "));
+
+        file++;
+        if (endOfRank) {
+            rank--;
+            file = 0;
+        }
     }
 	
 	return 0;
