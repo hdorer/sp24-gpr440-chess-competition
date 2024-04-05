@@ -13,9 +13,7 @@ namespace NDChess {
 		0, 0, 0, 0, 0, 0, 0, 0,
 		128, 128, 128, 128, 128, 128, 128, 128,
 		134, 130, 132, 136, 138, 132, 130, 134
-	} {
-		makePiece(0, PieceTypeBit::EN_PASSANT_PAWN, ColorBit::WHITE);
-	}
+	} { }
 	
 	void Board::clear() {
 		for (int i = 0; i < NUM_SQUARES; i++) {
@@ -261,8 +259,65 @@ namespace NDChess {
 	}
 
 	void Board::evaluatePosition(int& whiteScore, int& blackScore) {
-		whiteScore = material(ColorBit::WHITE);
-		blackScore = material(ColorBit::BLACK);
+		whiteScore = 0;
+		blackScore = 0;
+
+		for (int i = 0; i < 64; i++) {
+			if (!isPieceHere(i)) {
+				continue;
+			}
+
+			ColorBit pieceColor = getColor(i);
+			PieceTypeBit pieceType = getPieceType(i);
+			if (pieceType == PieceTypeBit::EN_PASSANT_PAWN) {
+				continue;
+			}
+
+			switch (pieceType) {
+			case PieceTypeBit::PAWN:
+				if (pieceColor == ColorBit::WHITE) {
+					whiteScore += 1 * PieceSquareTables::whitePawn[i];
+				} else {
+					blackScore += 1 * PieceSquareTables::blackPawn[i];
+				}
+				break;
+			case PieceTypeBit::KNIGHT:
+				if (pieceColor == ColorBit::WHITE) {
+					whiteScore += 3 * PieceSquareTables::whiteKnight[i];
+				} else {
+					blackScore += 3 * PieceSquareTables::blackKnight[i];
+				}
+				break;
+			case PieceTypeBit::BISHOP:
+				if (pieceColor == ColorBit::WHITE) {
+					whiteScore += 3 * PieceSquareTables::whiteBishop[i];
+				} else {
+					blackScore += 3 * PieceSquareTables::blackBishop[i];
+				}
+				break;
+			case PieceTypeBit::ROOK:
+				if (pieceColor == ColorBit::WHITE) {
+					whiteScore += 5 * PieceSquareTables::whiteRook[i];
+				} else {
+					blackScore += 5 * PieceSquareTables::blackRook[i];
+				}
+				break;
+			case PieceTypeBit::QUEEN:
+				if (pieceColor == ColorBit::WHITE) {
+					whiteScore += 9 * PieceSquareTables::whiteQueen[i];
+				} else {
+					blackScore += 9 * PieceSquareTables::blackQueen[i];
+				}
+				break;
+			case PieceTypeBit::KING:
+				if (pieceColor == ColorBit::WHITE) {
+					whiteScore += 1 * PieceSquareTables::whiteKing[i];
+				} else {
+					blackScore += 1 * PieceSquareTables::blackKing[i];
+				}
+				break;
+			}
+		}
 	}
 
 	bool Board::isPieceHere(int index) const {

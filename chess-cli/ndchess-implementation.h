@@ -1,7 +1,5 @@
 #include <iostream>
 #include "Board.h"
-#include <algorithm>
-#include <iterator>
 
 int ndchess_implementation() {
     // Print title
@@ -12,27 +10,13 @@ int ndchess_implementation() {
         << "/_____/_/   \\__,_/_/_/ /_/  /_/ |_|\\____/\\__/   \\____/_____/___/   \n"
         << "-------------------------------------------------------------------" << std::endl;
 
-	/*NDChess::Board board;
+	NDChess::Board board;
+    board.setPositionFromFen("1r4kR/8/p1q1pBP1/2p1P3/2PpN3/3P4/P4PK1/8 b - - 1 41");
     std::cout << board << std::endl;
-    std::cout << board.material(NDChess::ColorBit::WHITE) << std::endl;*/
-
-    int* arr = NDChess::PieceSquareTables::blackKing;
-
-    int rank = 7;
-    int file = 0;
-    for (int i = 0; i < 64; i++) {
-        // this code is so weird
-        bool endOfRank = i % 8 == 7;
-
-        std::cout << arr[rank * 8 + file];
-        std::cout << (i == 63 ? "" : (endOfRank ? ",\n" : ", "));
-
-        file++;
-        if (endOfRank) {
-            rank--;
-            file = 0;
-        }
-    }
+    std::cout << board.rawView() << std::endl;
+    int whiteScore, blackScore;
+    board.evaluatePosition(whiteScore, blackScore);
+    std::cout << "White score: " << whiteScore << std::endl << "Black score: " << blackScore << std::endl;
 	
 	return 0;
 }
