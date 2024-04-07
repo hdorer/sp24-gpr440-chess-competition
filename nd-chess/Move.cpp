@@ -48,6 +48,12 @@ namespace NDChess {
 		return result;
 	}
 
+	std::vector<Move> bishop(Board* board, int index) {
+		int currentIndex = index;
+		int currentRank = index / 8;
+		currentIndex += 9;
+	}
+
 	bool MoveRules::pawnMove(std::vector<Move>& moveList, Board* board, int startIndex, int endIndex) {
 		if (!board->isPieceHere(endIndex)) {
 			Move newMove(startIndex, endIndex);
