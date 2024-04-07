@@ -16,17 +16,21 @@ namespace NDChess {
 		void clear(int index);
 		void setPositionFromFen(std::string fen);
 		
-		std::string rawView();
-		std::string pieceToString(int index);
+		uint8_t getSquare(int index) const;
+		std::string rawView() const;
+		std::string pieceToString(int index) const;
 
-		int material(ColorBit color);
-		void evaluatePosition(int& whiteScore, int& blackScore);
+		int material(ColorBit color) const;
+		void evaluatePosition(int& whiteScore, int& blackScore) const;
 
 		bool isPieceHere(int index) const;
 		ColorBit getColor(int index) const;
 		PieceTypeBit getPieceType(int index) const;
 		InCheckBit getInCheck(int index) const;
 		CastlingRightsBit getCastlingRights(int index) const;
+
+		bool isOpponentPieceHere(int index, ColorBit color) const;
+		int pawnRank(ColorBit color) const;
 	private:
 		uint8_t squares[NUM_SQUARES];
 

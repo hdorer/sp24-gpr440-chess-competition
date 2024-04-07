@@ -187,7 +187,7 @@ namespace NDChess {
 		}
 	}
 	
-	std::string Board::rawView() {
+	std::string Board::rawView() const {
 		std::stringstream rawViewStream;
 		rawViewStream << "(Note: Ranks are drawn in reverse order in raw view)" << std::endl;
 
@@ -201,7 +201,7 @@ namespace NDChess {
 		return rawViewStream.str();
 	}
 
-	std::string Board::pieceToString(int index) {
+	std::string Board::pieceToString(int index) const {
 		if (index < 0 || index >= NUM_SQUARES) {
 			return "None";
 		}
@@ -223,7 +223,7 @@ namespace NDChess {
 		return pieceStream.str();
 	}
 
-	int Board::material(ColorBit color) {
+	int Board::material(ColorBit color) const {
 		int result = 0;
 		
 		for (int i = 0; i < NUM_SQUARES; i++) {
@@ -258,7 +258,7 @@ namespace NDChess {
 		return result;
 	}
 
-	void Board::evaluatePosition(int& whiteScore, int& blackScore) {
+	void Board::evaluatePosition(int& whiteScore, int& blackScore) const {
 		whiteScore = 0;
 		blackScore = 0;
 
@@ -380,6 +380,26 @@ namespace NDChess {
 		}
 
 		return (CastlingRightsBit)(squares[index] & CASTLING_RIGHTS_MASK);
+	}
+
+	bool Board::isOpponentPieceHere(int index, ColorBit color) const {
+		if (!isPieceHere(index)) {
+			return false;
+		}
+
+		ColorBit squareColor = getColor(index);
+		return squareColor != color;
+	}
+
+	int Board::pawnRank(ColorBit color) const {
+		switch (color) {
+		case ColorBit::BLACK:
+			return 7;
+		case ColorBit::WHITE:
+			return 1;
+		case ColorBit::NOPIECE:
+			return -1;
+		}
 	}
 
 	void Board::setCastlingRights(int index, CastlingRightsBit rights) {
