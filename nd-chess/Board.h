@@ -19,10 +19,12 @@ namespace NDChess {
 		void setPositionFromFen(std::string fen);
 		
 		std::string rawView() const;
-		std::string pieceToString(int index) const;
+		std::string squareName(int index) const;
+		char squareChar(int index) const;
+		std::string pieceInfo(int index) const;
 
 		int material(ColorBit color) const;
-		std::vector<Move> getLegalMoves(ColorBit color);
+		std::vector<Move> legalMoves(ColorBit color);
 		void evaluatePosition(int& whiteScore, int& blackScore) const;
 
 		bool isPieceHere(int index) const;
@@ -49,8 +51,6 @@ namespace NDChess {
 		
 		void makePiece(int index, PieceTypeBit type, ColorBit bit);
 		void setCastlingRights(int index, CastlingRightsBit rights);
-		
-		char squareChar(int index) const;
 
 		friend std::ostream& operator<<(std::ostream& os, const Board& rhs);
 	};

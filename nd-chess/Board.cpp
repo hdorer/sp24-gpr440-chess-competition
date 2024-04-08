@@ -201,7 +201,23 @@ namespace NDChess {
 		return rawViewStream.str();
 	}
 
-	std::string Board::pieceToString(int index) const {
+	std::string Board::squareName(int index) const {
+		std::stringstream result;
+		
+		if (index < 0 || index >= NUM_SQUARES) {
+			return "";
+		}
+
+		int rank = index / 8;
+		int file = index % 8;
+
+		result << (char)(file + 97);
+		result << rank;
+
+		return result.str();
+	}
+
+	std::string Board::pieceInfo(int index) const {
 		if (!isPieceHere(index)) {
 			return "None";
 		}
@@ -250,7 +266,7 @@ namespace NDChess {
 		return result;
 	}
 
-	std::vector<Move> Board::getLegalMoves(ColorBit color) {
+	std::vector<Move> Board::legalMoves(ColorBit color) {
 		std::vector<Move> result;
 		
 		for (int i = 0; i < NUM_SQUARES; i++) {

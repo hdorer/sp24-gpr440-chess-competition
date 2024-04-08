@@ -1,10 +1,21 @@
 #include "Move.h"
 
 #include "Board.h"
+#include <sstream>
 
 
 namespace NDChess {
-	std::vector<Move> MoveRules::pawn(const Board* board, int index, ColorBit color, bool attacksOnly) {
+	std::string Move::toString(const Board* board) const {
+		std::stringstream result;
+
+		result << board->squareChar(startIndex);
+		result << board->squareName(startIndex);
+		result << board->squareName(endIndex);
+
+		return result.str();
+	}
+	
+	std::vector<Move> MoveRules::pawn(const Board* board, int index, bool attacksOnly) {
 		std::vector<Move> result;
 		int moveDirection = board->getColor(index) == ColorBit::WHITE ? 1 : -1;
 
@@ -13,7 +24,7 @@ namespace NDChess {
 			int oneForwardIndex = index + 8 * moveDirection;
 			if (pawnMove(result, board, index, oneForwardIndex)) {
 				int startRank = index / 8;
-				if (startRank == board->pawnRank(color)) {
+				if (startRank == board->pawnRank(board->getColor(index))) {
 					int twoForwardIndex = oneForwardIndex + 8 * moveDirection;
 					pawnMove(result, board, index, twoForwardIndex);
 				}
@@ -21,28 +32,28 @@ namespace NDChess {
 		}
 
 		int diagonalLeftIndex = index + 7 * moveDirection; // left relative to the direction the pawn is facing I guess lol
-		pawnAttack(result, board, index, diagonalLeftIndex, color);
+		pawnAttack(result, board, index, diagonalLeftIndex);
 
 		int diagonalRightIndex = index + 9 * moveDirection;
-		pawnAttack(result, board, index, diagonalRightIndex, color);
+		pawnAttack(result, board, index, diagonalRightIndex);
 
 		return result;
 	}
 
-	std::vector<Move> MoveRules::knight(const Board* board, int index, ColorBit color) {
+	std::vector<Move> MoveRules::knight(const Board* board, int index) {
 		std::vector<Move> result;
 		int relativeIndices[] = { -15, -17, -6, -10, 6, 10, 15, 17 };
 
 		for (int i = 0; i < 8; i++) {
 			int endIndex = relativeIndices[i];
 			if (!board->isPieceHere(endIndex)) {
-				Move newMove(index, endIndex);
+				Move newMove(board->getPieceType(index), board->getColor(index), index, endIndex, board);
 				result.push_back(newMove);
 				continue;
 			}
 
-			if (board->isOpponentPieceHere(index, color)) {
-				Move newMove(index, endIndex);
+			if (board->isOpponentPieceHere(index, board->getColor(index))) {
+				Move newMove(board->getPieceType(index), board->getColor(index), index, endIndex, board);
 				result.push_back(newMove);
 			}
 		}
@@ -50,47 +61,47 @@ namespace NDChess {
 		return result;
 	}
 
-	std::vector<Move> MoveRules::bishop(const Board* board, int index, ColorBit color) {
-		return bishop(board, index, color);
+	std::vector<Move> MoveRules::bishop(const Board* board, int index) {
+		return bishop(board, index);
 	}
 
-	std::vector<Move> MoveRules::rook(const Board* board, int index, ColorBit color) {
-		return rook(board, index, color, 8);
+	std::vector<Move> MoveRules::rook(const Board* board, int index) {
+		return rook(board, index, 8);
 	}
 
-	std::vector<Move> MoveRules::queen(const Board* board, int index, ColorBit color) {
-		return queen(board, index, color, 8);
+	std::vector<Move> MoveRules::queen(const Board* board, int index) {
+		return queen(board, index, 8);
 	}
 
-	std::vector<Move> MoveRules::king(const Board* board, int index, ColorBit color) {
-		return queen(board, index, color, 1);
+	std::vector<Move> MoveRules::king(const Board* board, int index) {
+		return queen(board, index, 1);
 	}
 
-	std::vector<Move> MoveRules::bishop(const Board* board, int index, ColorBit color, int distanceCap) {
+	std::vector<Move> MoveRules::bishop(const Board* board, int index, int distanceCap) {
 		std::vector<Move> result;
 
-		lineMove(result, board, index, -9, color, distanceCap);
-		lineMove(result, board, index, -7, color, distanceCap);
-		lineMove(result, board, index, 7, color, distanceCap);
-		lineMove(result, board, index, 9, color, distanceCap);
+		lineMove(result, board, index, -9, distanceCap);
+		lineMove(result, board, index, -7, distanceCap);
+		lineMove(result, board, index, 7, distanceCap);
+		lineMove(result, board, index, 9, distanceCap);
 
 		return result;
 	}
 
-	std::vector<Move> MoveRules::rook(const Board* board, int index, ColorBit color, int distanceCap) {
+	std::vector<Move> MoveRules::rook(const Board* board, int index, int distanceCap) {
 		std::vector<Move> result;
 
-		lineMove(result, board, index, -1, color, distanceCap);
-		lineMove(result, board, index, 1, color, distanceCap);
-		lineMove(result, board, index, -8, color, distanceCap);
-		lineMove(result, board, index, 8, color, distanceCap);
+		lineMove(result, board, index, -1, distanceCap);
+		lineMove(result, board, index, 1, distanceCap);
+		lineMove(result, board, index, -8, distanceCap);
+		lineMove(result, board, index, 8, distanceCap);
 
 		return result;
 	}
 
-	std::vector<Move> MoveRules::queen(const Board* board, int index, ColorBit color, int distanceCap) {
-		std::vector<Move> straightMoves = rook(board, index, color, distanceCap);
-		std::vector<Move> diagonalMoves = bishop(board, index, color, distanceCap);
+	std::vector<Move> MoveRules::queen(const Board* board, int index, int distanceCap) {
+		std::vector<Move> straightMoves = rook(board, index, distanceCap);
+		std::vector<Move> diagonalMoves = bishop(board, index, distanceCap);
 
 		std::vector<Move> result;
 		result.reserve(straightMoves.size() + diagonalMoves.size());
@@ -102,23 +113,23 @@ namespace NDChess {
 
 	bool MoveRules::pawnMove(std::vector<Move>& moveList, const Board* board, int startIndex, int endIndex) {
 		if (!board->isPieceHere(endIndex)) {
-			Move newMove(startIndex, endIndex);
+			Move newMove(board->getPieceType(startIndex), board->getColor(startIndex), startIndex, endIndex, board);
 			moveList.push_back(newMove);
 			return true;
 		}
 		return false;
 	}
 
-	bool MoveRules::pawnAttack(std::vector<Move>& moveList, const Board* board, int startIndex, int endIndex, ColorBit color) {
-		if (board->isOpponentPieceHere(endIndex, color)) {
-			Move newMove(startIndex, endIndex);
+	bool MoveRules::pawnAttack(std::vector<Move>& moveList, const Board* board, int startIndex, int endIndex) {
+		if (board->isOpponentPieceHere(endIndex, board->getColor(startIndex))) {
+			Move newMove(board->getPieceType(startIndex), board->getColor(startIndex), startIndex, endIndex, board);
 			moveList.push_back(newMove);
 			return true;
 		}
 		return false;
 	}
 
-	void MoveRules::lineMove(std::vector<Move>& moveList, const Board* board, int startIndex, int increment, ColorBit color, int distanceCap) {
+	void MoveRules::lineMove(std::vector<Move>& moveList, const Board* board, int startIndex, int increment, int distanceCap) {
 		int currentIndex = startIndex;
 		int currentRank;
 		int currentFile;
@@ -132,9 +143,9 @@ namespace NDChess {
 				return;
 			}
 
-			Move newMove(startIndex, currentIndex);
+			Move newMove(board->getPieceType(startIndex), board->getColor(startIndex), startIndex, currentIndex, board);
 
-			if (board->isOpponentPieceHere(currentIndex, color)) {
+			if (board->isOpponentPieceHere(currentIndex, board->getColor(startIndex))) {
 				moveList.push_back(newMove);
 				return;
 			}
