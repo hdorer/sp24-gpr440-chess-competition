@@ -16,7 +16,6 @@ namespace NDChess {
 		void clear(int index);
 		void setPositionFromFen(std::string fen);
 		
-		uint8_t getSquare(int index) const;
 		std::string rawView() const;
 		std::string pieceToString(int index) const;
 
