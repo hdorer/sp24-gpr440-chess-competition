@@ -202,10 +202,6 @@ namespace NDChess {
 	}
 
 	std::string Board::pieceToString(int index) const {
-		if (index < 0 || index >= NUM_SQUARES) {
-			return "None";
-		}
-
 		if (!isPieceHere(index)) {
 			return "None";
 		}
@@ -227,10 +223,6 @@ namespace NDChess {
 		int result = 0;
 		
 		for (int i = 0; i < NUM_SQUARES; i++) {
-			if (!isPieceHere(i)) {
-				continue;
-			}
-
 			if (getColor(i) != color) {
 				continue;
 			}
@@ -256,6 +248,19 @@ namespace NDChess {
 		}
 
 		return result;
+	}
+
+	std::vector<Move> Board::getLegalMoves(ColorBit color) {
+		std::vector<Move> result;
+		
+		for (int i = 0; i < NUM_SQUARES; i++) {
+			std::vector<Move> pieceMoves = moveRulesOfSquare(i, color);
+			if (pieceMoves.empty()) {
+				continue;
+			}
+
+			result.insert(result.end(), pieceMoves.begin(), pieceMoves.end());
+		}
 	}
 
 	void Board::evaluatePosition(int& whiteScore, int& blackScore) const {
@@ -329,10 +334,6 @@ namespace NDChess {
 	}
 	
 	ColorBit Board::getColor(int index) const {
-		if (index < 0 || index >= NUM_SQUARES) {
-			return ColorBit::NOPIECE;
-		}
-
 		if (!isPieceHere(index)) {
 			return ColorBit::NOPIECE;
 		}
@@ -340,10 +341,6 @@ namespace NDChess {
 	}
 
 	PieceTypeBit Board::getPieceType(int index) const {
-		if (index < 0 || index >= NUM_SQUARES) {
-			return PieceTypeBit::NOPIECE;
-		}
-
 		if (!isPieceHere(index)) {
 			return PieceTypeBit::NOPIECE;
 		}
@@ -351,14 +348,6 @@ namespace NDChess {
 	}
 
 	InCheckBit Board::getInCheck(int index) const {
-		if (index < 0 || index >= NUM_SQUARES) {
-			return InCheckBit::NOTKING;
-		}
-
-		if (!isPieceHere(index)) {
-			return InCheckBit::NOTKING;
-		}
-
 		if (getPieceType(index) != PieceTypeBit::KING) {
 			return InCheckBit::NOTKING;
 		}
@@ -367,14 +356,6 @@ namespace NDChess {
 	}
 
 	CastlingRightsBit Board::getCastlingRights(int index) const {
-		if (index < 0 || index >= NUM_SQUARES) {
-			return CastlingRightsBit::NOTKING;
-		}
-
-		if (!isPieceHere(index)) {
-			return CastlingRightsBit::NOTKING;
-		}
-
 		if (getPieceType(index) != PieceTypeBit::KING) {
 			return CastlingRightsBit::NOTKING;
 		}
@@ -401,22 +382,6 @@ namespace NDChess {
 			return -1;
 		}
 	}
-
-	void Board::setCastlingRights(int index, CastlingRightsBit rights) {
-		if (index < 0 || index >= NUM_SQUARES) {
-			return;
-		}
-
-		if (!isPieceHere(index)) {
-			return;
-		}
-
-		if (getPieceType(index) != PieceTypeBit::KING) {
-			return;
-		}
-
-		squares[index] = (squares[index] & ~CASTLING_RIGHTS_MASK) | (uint8_t)rights;
-	}
 	
 	int Board::kingIndex(ColorBit color) const {
 		for (int i = 0; i < NUM_SQUARES; i++) {
@@ -433,6 +398,27 @@ namespace NDChess {
 			}
 		}
 	}
+
+	std::vector<Move> Board::moveRulesOfSquare(int index, ColorBit color) const {
+		if (getColor(index) != color) {
+			return {};
+		}
+		
+		switch (getPieceType(index)) {
+		case PieceTypeBit::PAWN:
+			return MoveRules::pawn(this, index, color);
+		case PieceTypeBit::KNIGHT:
+			return MoveRules::knight(this, index, color);
+		case PieceTypeBit::BISHOP:
+			return MoveRules::bishop(this, index, color);
+		case PieceTypeBit::ROOK:
+			return MoveRules::rook(this, index, color);
+		case PieceTypeBit::QUEEN:
+			return MoveRules::queen(this, index, color);
+		case PieceTypeBit::KING:
+			return MoveRules::king(this, index, color);
+		}
+	}
 	
 	void Board::makePiece(int index, PieceTypeBit type, ColorBit color) {
 		if (index < 0 || index >= NUM_SQUARES) {
@@ -444,6 +430,22 @@ namespace NDChess {
 		squares[index] = PIECE_HERE_MASK | typeVal | colorVal;
 	}
 
+	void Board::setCastlingRights(int index, CastlingRightsBit rights) {
+		if (index < 0 || index >= NUM_SQUARES) {
+			return;
+		}
+
+		if (!isPieceHere(index)) {
+			return;
+		}
+
+		if (getPieceType(index) != PieceTypeBit::KING) {
+			return;
+		}
+
+		squares[index] = (squares[index] & ~CASTLING_RIGHTS_MASK) | (uint8_t)rights;
+	}
+
 	char Board::squareChar(int index) const {
 		if (index < 0 || index >= NUM_SQUARES) {
 			return '?';
@@ -451,34 +453,36 @@ namespace NDChess {
 
 		char display = '.';
 
-		if (isPieceHere(index)) {
-			PieceTypeBit type = getPieceType(index);
-			switch (type) {
-			case PieceTypeBit::PAWN:
-				display = 'p';
-				break;
-			case PieceTypeBit::KNIGHT:
-				display = 'n';
-				break;
-			case PieceTypeBit::BISHOP:
-				display = 'b';
-				break;
-			case PieceTypeBit::ROOK:
-				display = 'r';
-				break;
-			case PieceTypeBit::QUEEN:
-				display = 'q';
-				break;
-			case PieceTypeBit::KING:
-				display = 'k';
-				break;
-			case PieceTypeBit::EN_PASSANT_PAWN:
-				return '.';
-			}
+		if (!isPieceHere(index)) {
+			return display;
+		}
 
-			if ((squares[index] & 1) == 1) {
-				display -= 32;
-			}
+		PieceTypeBit type = getPieceType(index);
+		switch (type) {
+		case PieceTypeBit::PAWN:
+			display = 'p';
+			break;
+		case PieceTypeBit::KNIGHT:
+			display = 'n';
+			break;
+		case PieceTypeBit::BISHOP:
+			display = 'b';
+			break;
+		case PieceTypeBit::ROOK:
+			display = 'r';
+			break;
+		case PieceTypeBit::QUEEN:
+			display = 'q';
+			break;
+		case PieceTypeBit::KING:
+			display = 'k';
+			break;
+		case PieceTypeBit::EN_PASSANT_PAWN:
+			return '.';
+		}
+
+		if ((squares[index] & 1) == 1) {
+			display -= 32;
 		}
 
 		return display;

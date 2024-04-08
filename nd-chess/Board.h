@@ -1,8 +1,10 @@
 #pragma once
 
 #include <iostream>
+#include "Move.h"
 #include <string>
 #include "Types.h"
+#include <vector>
 
 
 namespace NDChess {
@@ -20,6 +22,7 @@ namespace NDChess {
 		std::string pieceToString(int index) const;
 
 		int material(ColorBit color) const;
+		std::vector<Move> getLegalMoves(ColorBit color);
 		void evaluatePosition(int& whiteScore, int& blackScore) const;
 
 		bool isPieceHere(int index) const;
@@ -41,11 +44,12 @@ namespace NDChess {
 		const uint8_t CASTLING_RIGHTS_MASK = 96;
 		const uint8_t PIECE_HERE_MASK = 128;
 
-		void setCastlingRights(int index, CastlingRightsBit rights);
-		
 		int kingIndex(ColorBit color) const;
+		std::vector<Move> moveRulesOfSquare(int index, ColorBit color) const;
 		
 		void makePiece(int index, PieceTypeBit type, ColorBit bit);
+		void setCastlingRights(int index, CastlingRightsBit rights);
+		
 		char squareChar(int index) const;
 
 		friend std::ostream& operator<<(std::ostream& os, const Board& rhs);
