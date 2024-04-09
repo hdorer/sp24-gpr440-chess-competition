@@ -25,20 +25,20 @@ namespace NDChess {
 	class MoveRules {
 	public:
 		static std::vector<Move> pawn(const Board* board, int index, bool attacksOnly = false);
-		static std::vector<Move> knight(const Board* board, int index);
-		static std::vector<Move> bishop(const Board* board, int index);
-		static std::vector<Move> rook(const Board* board, int index);
-		static std::vector<Move> queen(const Board* board, int index);
-		static std::vector<Move> king(const Board* board, int index);
+		static std::vector<Move> knight(const Board* board, int index, bool attacksOnly = false);
+		static std::vector<Move> bishop(const Board* board, int index, bool attacksOnly = false);
+		static std::vector<Move> rook(const Board* board, int index, bool attacksOnly = false);
+		static std::vector<Move> queen(const Board* board, int index, bool attacksOnly = false);
+		static std::vector<Move> king(const Board* board, int index, bool attacksOnly = false);
 
 	private:
-		static std::vector<Move> bishop(const Board* board, int index, int distanceCap);
-		static std::vector<Move> rook(const Board* board, int index, int distanceCap);
-		static std::vector<Move> queen(const Board* board, int index, int distanceCap);
+		static std::vector<Move> bishop(const Board* board, int index, int distanceCap, bool attacksOnly = false);
+		static std::vector<Move> rook(const Board* board, int index, int distanceCap, bool attacksOnly = false);
+		static std::vector<Move> queen(const Board* board, int index, int distanceCap, bool attacksOnly = false);
 
 		static bool pawnMove(std::vector<Move>& moveList, const Board* board, int startIndex, int endIndex);
 		static bool pawnAttack(std::vector<Move>& moveList, const Board* board, int startIndex, int endIndex);
-		static void lineMove(std::vector<Move>& moveList, const Board* board, int startIndex, int increment, int distanceCap);
+		static void lineMove(std::vector<Move>& moveList, const Board* board, int startIndex, int increment, int distanceCap, bool attacksOnly = false);
 	};
 
 

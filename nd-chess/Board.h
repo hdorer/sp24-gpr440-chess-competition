@@ -24,7 +24,7 @@ namespace NDChess {
 		std::string pieceInfo(int index) const;
 
 		int material(ColorBit color) const;
-		std::vector<Move> legalMoves(ColorBit color, bool pawnAttacksOnly = false) const;
+		std::vector<Move> legalMoves(ColorBit color, bool attacksOnly = false) const;
 		void evaluatePosition(int& whiteScore, int& blackScore) const;
 
 		bool isPieceHere(int index) const;
@@ -47,7 +47,7 @@ namespace NDChess {
 		const uint8_t PIECE_HERE_MASK = 128;
 
 		int kingIndex(ColorBit color) const;
-		std::vector<Move> moveRulesOfSquare(int index, ColorBit color, bool pawnAttacksOnly = false) const;
+		std::vector<Move> moveRulesOfSquare(int index, ColorBit color, bool attacksOnly = false) const;
 		
 		void makePiece(int index, PieceTypeBit type, ColorBit bit);
 		void setCastlingRights(int index, CastlingRightsBit rights);

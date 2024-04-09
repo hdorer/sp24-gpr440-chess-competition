@@ -18,6 +18,7 @@ int ndchess_implementation() {
 	NDChess::Board board;
     board.setPositionFromFen("r3k2r/pp3p1b/1np2p1p/3p4/3P1b2/1P2PN2/P4PPP/R2K1B1R w kq - 0 16");
     std::cout << board << std::endl;
+    std::cout << board.rawView() << std::endl;
     int whiteScore, blackScore;
     board.evaluatePosition(whiteScore, blackScore);
     std::cout << "White score: " << whiteScore << "\nBlack score: " << blackScore << std::endl;
