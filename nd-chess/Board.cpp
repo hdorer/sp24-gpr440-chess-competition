@@ -264,11 +264,11 @@ namespace NDChess {
 		return result;
 	}
 
-	std::vector<Move> Board::legalMoves(ColorBit color) {
+	std::vector<Move> Board::legalMoves(ColorBit color, bool pawnAttacksOnly) const {
 		std::vector<Move> result;
 		
 		for (int i = 0; i < NUM_SQUARES; i++) {
-			std::vector<Move> pieceMoves = moveRulesOfSquare(i, color);
+			std::vector<Move> pieceMoves = moveRulesOfSquare(i, color, pawnAttacksOnly);
 			if (pieceMoves.empty()) {
 				continue;
 			}
@@ -339,6 +339,12 @@ namespace NDChess {
 				break;
 			}
 		}
+
+		std::vector<Move> whiteMoves = legalMoves(ColorBit::WHITE, true);
+		whiteScore += whiteMoves.size();
+
+		std::vector<Move> blackMoves = legalMoves(ColorBit::BLACK, true);
+		blackScore += blackMoves.size();
 	}
 
 	bool Board::isPieceHere(int index) const {
@@ -415,14 +421,14 @@ namespace NDChess {
 		}
 	}
 
-	std::vector<Move> Board::moveRulesOfSquare(int index, ColorBit color) const {
+	std::vector<Move> Board::moveRulesOfSquare(int index, ColorBit color, bool pawnAttacksOnly) const {
 		if (getColor(index) != color) {
 			return {};
 		}
 		
 		switch (getPieceType(index)) {
 		case PieceTypeBit::PAWN:
-			return MoveRules::pawn(this, index);
+			return MoveRules::pawn(this, index, pawnAttacksOnly);
 		case PieceTypeBit::KNIGHT:
 			return MoveRules::knight(this, index);
 		case PieceTypeBit::BISHOP:

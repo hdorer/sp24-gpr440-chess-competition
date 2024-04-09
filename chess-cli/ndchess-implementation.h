@@ -16,12 +16,11 @@ int ndchess_implementation() {
         << "-------------------------------------------------------------------" << std::endl;
 
 	NDChess::Board board;
-    board.setPositionFromFen("1r4kR/8/p1q1pBP1/2p1P3/2PpN3/3P4/P4PK1/8 b - - 1 41");
+    board.setPositionFromFen("r3k2r/pp3p1b/1np2p1p/3p4/3P1b2/1P2PN2/P4PPP/R2K1B1R w kq - 0 16");
     std::cout << board << std::endl;
-    std::vector<NDChess::Move> legalMoves = board.legalMoves(NDChess::ColorBit::WHITE);
-    for (int i = 0; i < legalMoves.size(); i++) {
-        std::cout << "[" << i << "]: " << legalMoves[i].moveString << std::endl;
-    }
+    int whiteScore, blackScore;
+    board.evaluatePosition(whiteScore, blackScore);
+    std::cout << "White score: " << whiteScore << "\nBlack score: " << blackScore << std::endl;
 	
 	return 0;
 }
