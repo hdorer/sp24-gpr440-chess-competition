@@ -62,7 +62,7 @@ namespace NDChess {
 	}
 
 	std::vector<Move> MoveRules::bishop(const Board* board, int index) {
-		return bishop(board, index);
+		return bishop(board, index, 8);
 	}
 
 	std::vector<Move> MoveRules::rook(const Board* board, int index) {

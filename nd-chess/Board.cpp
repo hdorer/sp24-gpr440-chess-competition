@@ -177,9 +177,7 @@ namespace NDChess {
 				}
 
 				break;
-			}
-
-			if (state > 3) {
+			case 4:
 				return;
 			}
 
@@ -212,7 +210,7 @@ namespace NDChess {
 		int file = index % 8;
 
 		result << (char)(file + 97);
-		result << rank;
+		result << (rank + 1);
 
 		return result.str();
 	}
@@ -277,6 +275,8 @@ namespace NDChess {
 
 			result.insert(result.end(), pieceMoves.begin(), pieceMoves.end());
 		}
+
+		return result;
 	}
 
 	void Board::evaluatePosition(int& whiteScore, int& blackScore) const {
@@ -422,17 +422,17 @@ namespace NDChess {
 		
 		switch (getPieceType(index)) {
 		case PieceTypeBit::PAWN:
-			return MoveRules::pawn(this, index, color);
+			return MoveRules::pawn(this, index);
 		case PieceTypeBit::KNIGHT:
-			return MoveRules::knight(this, index, color);
+			return MoveRules::knight(this, index);
 		case PieceTypeBit::BISHOP:
-			return MoveRules::bishop(this, index, color);
+			return MoveRules::bishop(this, index);
 		case PieceTypeBit::ROOK:
-			return MoveRules::rook(this, index, color);
+			return MoveRules::rook(this, index);
 		case PieceTypeBit::QUEEN:
-			return MoveRules::queen(this, index, color);
+			return MoveRules::queen(this, index);
 		case PieceTypeBit::KING:
-			return MoveRules::king(this, index, color);
+			return MoveRules::king(this, index);
 		}
 	}
 	

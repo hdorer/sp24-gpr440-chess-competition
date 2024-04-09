@@ -1,5 +1,10 @@
-#include <iostream>
+#pragma once
+
 #include "Board.h"
+#include <iostream>
+#include "Move.h"
+#include <vector>
+
 
 int ndchess_implementation() {
     // Print title
@@ -13,10 +18,10 @@ int ndchess_implementation() {
 	NDChess::Board board;
     board.setPositionFromFen("1r4kR/8/p1q1pBP1/2p1P3/2PpN3/3P4/P4PK1/8 b - - 1 41");
     std::cout << board << std::endl;
-    std::cout << board.rawView() << std::endl;
-    int whiteScore, blackScore;
-    board.evaluatePosition(whiteScore, blackScore);
-    std::cout << "White score: " << whiteScore << std::endl << "Black score: " << blackScore << std::endl;
+    std::vector<NDChess::Move> legalMoves = board.legalMoves(NDChess::ColorBit::WHITE);
+    for (int i = 0; i < legalMoves.size(); i++) {
+        std::cout << "[" << i << "]: " << legalMoves[i].moveString << std::endl;
+    }
 	
 	return 0;
 }

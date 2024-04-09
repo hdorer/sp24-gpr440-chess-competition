@@ -6,6 +6,8 @@
 
 
 namespace NDChess {
+	class Board;
+	
 	struct Move {
 	public:
 		int startIndex;
@@ -19,8 +21,6 @@ namespace NDChess {
 	private:
 		std::string toString(const Board* board) const;
 	};
-
-	class Board;
 	
 	class MoveRules {
 	public:
