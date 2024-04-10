@@ -11,7 +11,7 @@ Bits 2-4: Piece Type
 	3: rook
 	4: queen
 	5: king
-	6: en passant pawn (hopefully I can save this for later)
+	6: en passant pawn
 
 For king only:
 	Bit 5: In Check?
@@ -22,3 +22,5 @@ For king only:
 		1: can short castle
 		2: can long castle
 		3: can castle both ways
+
+Bit 8: 1 if this square has a piece, 0 otherwise

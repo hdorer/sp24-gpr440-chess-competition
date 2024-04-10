@@ -178,6 +178,9 @@ namespace NDChess {
 
 				break;
 			case 4:
+				checkKingInCheck(ColorBit::WHITE);
+				checkKingInCheck(ColorBit::BLACK);
+
 				return;
 			}
 
@@ -342,21 +345,19 @@ namespace NDChess {
 
 		std::vector<Move> whiteMoves = legalMoves(ColorBit::WHITE, true);
 		for (int i = 0; i < whiteMoves.size(); i++) {
-			if (getPieceType(whiteMoves[i].endIndex) == PieceTypeBit::KING) {
-				blackScore -= 50;
-			} else {
-				blackScore -= 5;
-			}
+			blackScore -= 5;
 		}
 
 		std::vector<Move> blackMoves = legalMoves(ColorBit::BLACK, true);
 		for (int i = 0; i < blackMoves.size(); i++) {
-			if (getPieceType(blackMoves[i].endIndex) == PieceTypeBit::KING) {
-				whiteScore -= 50;
-			}
-			else {
-				whiteScore -= 5;
-			}
+			whiteScore -= 5;
+		}
+
+		if (getInCheck(kingIndex(ColorBit::WHITE)) == InCheckBit::YES) {
+			whiteScore -= 45;
+		}
+		if (getInCheck(kingIndex(ColorBit::BLACK)) == InCheckBit::YES) {
+			whiteScore -= 45;
 		}
 	}
 
@@ -434,6 +435,18 @@ namespace NDChess {
 		}
 	}
 
+	void Board::checkKingInCheck(ColorBit color) {
+		int colorKingIndex = kingIndex(color);
+		std::vector<Move> colorAttacks = legalMoves(color, true);
+		
+		for (int i = 0; i < colorAttacks.size(); i++) {
+			if (colorAttacks[i].endIndex == colorKingIndex) {
+				setInCheck(colorKingIndex, true);
+			}
+		}
+		setInCheck(colorKingIndex, false);
+	}
+
 	std::vector<Move> Board::moveRulesOfSquare(int index, ColorBit color, bool attacksOnly) const {
 		if (getColor(index) != color) {
 			return {};
@@ -465,15 +478,15 @@ namespace NDChess {
 		squares[index] = PIECE_HERE_MASK | typeVal | colorVal;
 	}
 
+	void Board::setInCheck(int index, bool inCheck) {
+		if (getPieceType(index) != PieceTypeBit::KING) {
+			return;
+		}
+
+		squares[index] = (squares[index] & ~IN_CHECK_MASK) | (uint8_t)inCheck;
+	}
+
 	void Board::setCastlingRights(int index, CastlingRightsBit rights) {
-		if (index < 0 || index >= NUM_SQUARES) {
-			return;
-		}
-
-		if (!isPieceHere(index)) {
-			return;
-		}
-
 		if (getPieceType(index) != PieceTypeBit::KING) {
 			return;
 		}
@@ -516,7 +529,7 @@ namespace NDChess {
 			return '.';
 		}
 
-		if ((squares[index] & 1) == 1) {
+		if (getColor(index) == ColorBit::WHITE) {
 			display -= 32;
 		}
 

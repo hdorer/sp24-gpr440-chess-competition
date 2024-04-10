@@ -47,9 +47,11 @@ namespace NDChess {
 		const uint8_t PIECE_HERE_MASK = 128;
 
 		int kingIndex(ColorBit color) const;
+		void checkKingInCheck(ColorBit color);
 		std::vector<Move> moveRulesOfSquare(int index, ColorBit color, bool attacksOnly = false) const;
 		
-		void makePiece(int index, PieceTypeBit type, ColorBit bit);
+		void makePiece(int index, PieceTypeBit type, ColorBit color);
+		void setInCheck(int index, bool inCheck);
 		void setCastlingRights(int index, CastlingRightsBit rights);
 
 		friend std::ostream& operator<<(std::ostream& os, const Board& rhs);
