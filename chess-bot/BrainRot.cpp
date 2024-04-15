@@ -37,6 +37,8 @@ chess::Move BrainRot::getNextMove(chess::Board& board) {
 	// extra points if you create your own board/move representation instead of
 	// using the one provided by the library
 
+	evaluatePosition(board);
+
 	chess::Movelist moves;
 	chess::movegen::legalmoves(moves, board);
 	if (moves.size() == 0) {
@@ -52,16 +54,21 @@ chess::Move BrainRot::getNextMove(chess::Board& board) {
 }
 
 float BrainRot::evaluatePosition(chess::Board& board) {
+	std::cout << side << std::endl;
 	float material = 0;
 	for (std::map<chess::PieceType, int>::iterator it = pieceValues.begin(); it != pieceValues.end(); ++it) {
 		chess::Bitboard pieceBitboard = board.pieces(it->first, side);
 		uint64_t pieceBits = pieceBitboard.getBits();
+		std::cout << pieceBitboard << std::endl;
 
 		uint64_t bitIncr = 1;
 		int numPieces = 0;
 		int i = 0; // use this variable to prevent infinite loops by hard capping the loop at 64 iterations
 		while (bitIncr <= pieceBits && i < 64) {
-			numPieces += (pieceBits & bitIncr) != 0;
+			if ((pieceBits & bitIncr) != 0) {
+				numPieces++;
+				std::cout << i << std::endl;
+			}
 			bitIncr <<= 1;
 			i++;
 		}

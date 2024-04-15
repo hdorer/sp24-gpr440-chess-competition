@@ -1,3 +1,4 @@
+#include "BrainRot.h"
 #include "chess-simulator.h"
 // disservin's lib. drop a star on his hard work!
 // https://github.com/Disservin/chess-library
@@ -15,15 +16,6 @@ std::string ChessSimulator::Move(std::string fen) {
 
     // here goes a random movement
     chess::Board board(fen);
-    chess::Movelist moves;
-    chess::movegen::legalmoves(moves, board);
-    if (moves.size() == 0)
-        return "";
-
-    // get random move
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dist(0, moves.size() - 1);
-    auto move = moves[dist(gen)];
-    return chess::uci::moveToUci(move);
+    BrainRot bot;
+    return chess::uci::moveToUci(bot.getNextMove(board));
 }
