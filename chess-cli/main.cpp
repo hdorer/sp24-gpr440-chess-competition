@@ -76,7 +76,7 @@ bool chooseSide() {
     }
 }
 
-void brainRotMove(BrainRot& bot, chess::Board& board, PGNBuilder& pgn, bool saySide = false) {
+void brainRotMove(ChessSimulator::BrainRot& bot, chess::Board& board, PGNBuilder& pgn, bool saySide = false) {
     chess::Move move = bot.getNextMove(board);
     pgn.addMove(board, move);
     std::string moveStr = chess::uci::moveToSan(board, move);
@@ -90,7 +90,7 @@ void brainRotMove(BrainRot& bot, chess::Board& board, PGNBuilder& pgn, bool sayS
     board.makeMove(move);
 }
 
-void setPosition(std::string input, BrainRot& bot, chess::Board& board, PGNBuilder& pgn, bool& side) {
+void setPosition(std::string input, ChessSimulator::BrainRot& bot, chess::Board& board, PGNBuilder& pgn, bool& side) {
     std::string oldFen = board.getFen();
     std::string fen = input.substr(std::string("setposition ").size());
     board.setFen(fen);
@@ -112,9 +112,10 @@ void setPosition(std::string input, BrainRot& bot, chess::Board& board, PGNBuild
     }
 }
 
-void evaluatePosition(BrainRot& bot, chess::Board& board) {
-    float positionScore = bot.evaluatePosition(board);
-    std::cout << "Current position score: " << positionScore << std::endl;
+void evaluatePosition(ChessSimulator::BrainRot& bot, chess::Board& board) {
+    int whiteScore, blackScore;
+    bot.evaluatePosition(board, whiteScore, blackScore);
+    std::cout << "White score: " << whiteScore << "\nBlack score: " << blackScore << std::endl;
 }
 
 int main() {
@@ -128,7 +129,7 @@ int main() {
         << "/_____/_/   \\__,_/_/_/ /_/  /_/ |_|\\____/\\__/   \\____/_____/___/   \n"
         << "-------------------------------------------------------------------" << std::endl;
 
-    BrainRot bot;
+    ChessSimulator::BrainRot bot;
     chess::Board board(chess::constants::STARTPOS);
     CLISettings settings;
     PGNBuilder pgn;
