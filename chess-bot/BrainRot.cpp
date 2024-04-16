@@ -236,6 +236,14 @@ namespace ChessSimulator {
 			}
 		}
 
+		// attack logic
+
+		board.makeNullMove();
+
+		// other side attack logic
+
+		board.unmakeNullMove();
+
 		return score;
 	}
 }
