@@ -40,5 +40,6 @@ namespace ChessSimulator {
 		chess::Color side;
 
 		int evaluateForSide(chess::Board& board, chess::Color side);
+		chess::Move getRandomMove(chess::Board& board);
 	};
 }

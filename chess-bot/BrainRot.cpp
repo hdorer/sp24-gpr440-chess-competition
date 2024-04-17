@@ -193,25 +193,7 @@ namespace ChessSimulator {
 	}
 
 	chess::Move BrainRot::getNextMove(chess::Board& board) {
-		// create your board based on the board string following the FEN notation
-		// search for the best move using minimax / monte carlo tree search /
-		// alpha-beta pruning / ... try to use nice heuristics to speed up the search
-		// and have better results return the best move in UCI notation you will gain
-		// extra points if you create your own board/move representation instead of
-		// using the one provided by the library
-
-		chess::Movelist moves;
-		chess::movegen::legalmoves(moves, board);
-		if (moves.size() == 0) {
-			return chess::Move();
-		}
-
-		// get random move
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<> dist(0, moves.size() - 1);
-		chess::Move move = moves[dist(gen)];
-		return move;
+		return getRandomMove(board);
 	}
 
 	void BrainRot::evaluatePosition(chess::Board& board, int& whiteScore, int& blackScore) {
@@ -220,6 +202,7 @@ namespace ChessSimulator {
 	}
 
 	int BrainRot::evaluateForSide(chess::Board& board, chess::Color side) {
+		// Calculate material and 
 		int score = 0;
 		for (std::map<chess::PieceType, int>::iterator it = pieceValues.begin(); it != pieceValues.end(); ++it) {
 			chess::Bitboard pieceBitboard = board.pieces(it->first, side);
@@ -236,14 +219,41 @@ namespace ChessSimulator {
 			}
 		}
 
-		// attack logic
+		if (side != board.sideToMove()) {
+			board.makeNullMove();
+		}
 
-		board.makeNullMove();
+		chess::Movelist legalMoves;
+		chess::movegen::legalmoves(legalMoves, board);
+		for (int i = 0; i < legalMoves.size(); i++) {
+			if (board.isCapture(legalMoves[i])) {
+				score += 10;
+			}
+		}
 
-		// other side attack logic
+		if (board.inCheck()) {
+			score -= 50;
+		}
 
-		board.unmakeNullMove();
+		if (side != board.sideToMove()) {
+			board.unmakeNullMove();
+		}
 
 		return score;
+	}
+
+	chess::Move BrainRot::getRandomMove(chess::Board& board) {
+		chess::Movelist moves;
+		chess::movegen::legalmoves(moves, board);
+		if (moves.size() == 0) {
+			return chess::Move();
+		}
+
+		// get random move
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> dist(0, moves.size() - 1);
+		chess::Move move = moves[dist(gen)];
+		return move;
 	}
 }
