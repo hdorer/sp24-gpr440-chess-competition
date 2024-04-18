@@ -2,16 +2,19 @@
 
 
 namespace ChessSimulator {
-	void TreeNode::generateChildren(chess::Board& board) {
+	void TreeNode::generateChildren() {
 		if (!children.empty()) {
 			return;
 		}
 
+		chess::Board board(boardFen);
 		chess::Movelist legalMoves;
 		chess::movegen::legalmoves(legalMoves, board);
 
 		for (chess::Move move : legalMoves) {
-			children.push_back(TreeNode(move, this));
+			board.makeMove(move);
+			children.push_back(TreeNode(board.getFen(), this));
+			board.unmakeMove(move);
 		}
 	}
 

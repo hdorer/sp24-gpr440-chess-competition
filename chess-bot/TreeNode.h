@@ -1,17 +1,18 @@
 #pragma once
 
 #include <chess.hpp>
+#include <string>
 
 
 namespace ChessSimulator {
 	class TreeNode {
 	public:
-		TreeNode(chess::Move move, TreeNode* parent) : move(move), parent(parent) { }
+		TreeNode(std::string fen, TreeNode* parent) : boardFen(fen), parent(parent) { }
 
-		void generateChildren(chess::Board& board);
+		void generateChildren();
 		void calculateUCT();
 	private:
-		chess::Move move;
+		std::string boardFen;
 		chess::Color side;
 		int visits;
 		int wins;
