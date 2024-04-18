@@ -78,6 +78,10 @@ namespace ChessSimulator {
 		blackScore = evaluateForSide(board, chess::Color::BLACK);
 	}
 
+	float BrainRot::evaluatePosition(chess::Board& board) {
+		return evaluateForSide(board, side);
+	}
+
 	float BrainRot::evaluateForSide(chess::Board& board, chess::Color side) {
 		int numPieces = 0;
 		int material = 0;

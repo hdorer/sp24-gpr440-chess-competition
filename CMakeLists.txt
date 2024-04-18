@@ -107,7 +107,7 @@ IF(NOT CHESS_VALIDATOR_ONLY)
                 ${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer.cpp
                 ${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl.cpp
                 ${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
-         "chess-cli/PGNBuilder.h" "chess-cli/PGNBuilder.cpp"    "nd-chess/Board.h" "nd-chess/Types.h" "nd-chess/Board.cpp"   "nd-chess/Types.cpp" "nd-chess/Move.h" "nd-chess/Move.cpp" "chess-bot/Utils.h" "chess-bot/Utils.cpp")
+         "chess-cli/PGNBuilder.h" "chess-cli/PGNBuilder.cpp"    "nd-chess/Board.h" "nd-chess/Types.h" "nd-chess/Board.cpp"   "nd-chess/Types.cpp" "nd-chess/Move.h" "nd-chess/Move.cpp" "chess-bot/Utils.h" "chess-bot/Utils.cpp" "chess-bot/TreeNode.h" "chess-bot/TreeNode.cpp")
         target_include_directories( IMGUI
                 PUBLIC ${IMGUI_SOURCE_DIR}
                 PUBLIC ${IMGUI_SOURCE_DIR}/backends
@@ -125,19 +125,19 @@ endif() # NOT CHESS_VALIDATOR_ONLY
 
 # chess library
 file(GLOB_RECURSE CHESS_BOT_FILES CONFIGURE_DEPENDS "chess-bot/*.cpp" "chess-bot/*.h", "nd-chess/*.cpp", "nd-chess/*.h")
-add_library(chessbot STATIC ${CHESS_BOT_FILES} "chess-cli/PGNBuilder.h" "chess-cli/PGNBuilder.cpp"     "nd-chess/Board.h" "nd-chess/Types.h" "nd-chess/Board.cpp"   "nd-chess/Types.cpp" "nd-chess/Move.h" "nd-chess/Move.cpp" "chess-bot/Utils.h" "chess-bot/Utils.cpp")
+add_library(chessbot STATIC ${CHESS_BOT_FILES} "chess-cli/PGNBuilder.h" "chess-cli/PGNBuilder.cpp"     "nd-chess/Board.h" "nd-chess/Types.h" "nd-chess/Board.cpp"   "nd-chess/Types.cpp" "nd-chess/Move.h" "nd-chess/Move.cpp" "chess-bot/Utils.h" "chess-bot/Utils.cpp" "chess-bot/TreeNode.h" "chess-bot/TreeNode.cpp")
 set_target_properties(chessbot PROPERTIES LINKER_LANGUAGE CXX)
 include_directories("chess-bot", "nd-chess")
 
 # chess cli
 file(GLOB_RECURSE CHESS_CLI_FILES CONFIGURE_DEPENDS "chess-cli/*.cpp" "chess-cli/*.h")
-add_executable(chesscli ${CHESS_CLI_FILES} "chess-cli/PGNBuilder.h" "chess-cli/PGNBuilder.cpp"     "nd-chess/Board.h" "nd-chess/Types.h" "nd-chess/Board.cpp"   "nd-chess/Types.cpp" "nd-chess/Move.h" "nd-chess/Move.cpp" "chess-bot/Utils.h" "chess-bot/Utils.cpp")
+add_executable(chesscli ${CHESS_CLI_FILES} "chess-cli/PGNBuilder.h" "chess-cli/PGNBuilder.cpp"     "nd-chess/Board.h" "nd-chess/Types.h" "nd-chess/Board.cpp"   "nd-chess/Types.cpp" "nd-chess/Move.h" "nd-chess/Move.cpp" "chess-bot/Utils.h" "chess-bot/Utils.cpp" "chess-bot/TreeNode.h" "chess-bot/TreeNode.cpp")
 target_link_libraries(chesscli PUBLIC chessbot)
 
 if(NOT CHESS_VALIDATOR_ONLY)
 # chess gui
 file(GLOB_RECURSE CHESS_GUI_FILES CONFIGURE_DEPENDS "chess-gui/*.cpp" "chess-gui/*.h")
-add_executable(chessgui ${CHESS_GUI_FILES} "chess-cli/PGNBuilder.h" "chess-cli/PGNBuilder.cpp"     "nd-chess/Board.h" "nd-chess/Types.h" "nd-chess/Board.cpp"   "nd-chess/Types.cpp" "nd-chess/Move.h" "nd-chess/Move.cpp" "chess-bot/Utils.h" "chess-bot/Utils.cpp")
+add_executable(chessgui ${CHESS_GUI_FILES} "chess-cli/PGNBuilder.h" "chess-cli/PGNBuilder.cpp"     "nd-chess/Board.h" "nd-chess/Types.h" "nd-chess/Board.cpp"   "nd-chess/Types.cpp" "nd-chess/Move.h" "nd-chess/Move.cpp" "chess-bot/Utils.h" "chess-bot/Utils.cpp" "chess-bot/TreeNode.h" "chess-bot/TreeNode.cpp")
 target_link_libraries(chessgui PUBLIC chessbot IMGUI SDL2::SDL2 SDL2_image)
 endif() # NOT CHESS_VALIDATOR_ONLY
 
