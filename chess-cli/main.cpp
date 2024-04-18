@@ -1,6 +1,8 @@
+#include <algorithm>
 #include "BrainRot.h"
 #include "chess-simulator.h"
 #include <cstdlib>
+#include <functional>
 #include "magic_enum/magic_enum.hpp"
 #include "PGNBuilder.h"
 #include <string>
@@ -113,7 +115,7 @@ void setPosition(std::string input, ChessSimulator::BrainRot& bot, chess::Board&
 }
 
 void evaluatePosition(ChessSimulator::BrainRot& bot, chess::Board& board) {
-    int whiteScore, blackScore;
+    float whiteScore, blackScore;
     bot.evaluatePosition(board, whiteScore, blackScore);
     std::cout << "White score: " << whiteScore << "\nBlack score: " << blackScore << std::endl;
 }
