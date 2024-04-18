@@ -1,5 +1,7 @@
 #include "Utils.h"
 
+#include <random>
+
 
 namespace ChessSimulator {
 	namespace PieceSquareTables {
@@ -132,5 +134,20 @@ namespace ChessSimulator {
 		} else {
 			return chess::Color::BLACK;
 		}
+	}
+
+	chess::Move getRandomMove(chess::Board& board) {
+		chess::Movelist moves;
+		chess::movegen::legalmoves(moves, board);
+		if (moves.size() == 0) {
+			return chess::Move();
+		}
+
+		// get random move
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> dist(0, moves.size() - 1);
+		chess::Move move = moves[dist(gen)];
+		return move;
 	}
 }

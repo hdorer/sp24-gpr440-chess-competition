@@ -9,16 +9,25 @@ namespace ChessSimulator {
 	public:
 		TreeNode(std::string fen, TreeNode* parent) : boardFen(fen), parent(parent) { }
 
-		void generateChildren();
-		void calculateUCT();
+		std::vector<TreeNode>& getChildren() { return children; }
+
+		void expand();
+		void calculateChildrenUCT();
+		float playout(int maxMoves);
+
+		bool hasChildren() const { return !children.empty(); }
+		TreeNode& bestChild();
+		void propagateResult(float result) { wins += result; }
 	private:
 		std::string boardFen;
 		chess::Color side;
 		int visits;
-		int wins;
+		float wins;
 		float uct;
 
 		TreeNode* parent;
 		std::vector<TreeNode> children;
+
+		void calculateUCT();
 	};
 }

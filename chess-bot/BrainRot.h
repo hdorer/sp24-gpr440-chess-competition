@@ -29,6 +29,5 @@ namespace ChessSimulator {
 		float checkWeight = 0.2f;
 
 		float evaluateForSide(chess::Board& board, chess::Color side);
-		chess::Move getRandomMove(chess::Board& board);
 	};
 }

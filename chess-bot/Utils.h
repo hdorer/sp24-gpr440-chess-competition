@@ -25,4 +25,5 @@ namespace ChessSimulator {
 	const int BEST_POSSIBLE_POSITIONAL_SCORE = 1334;
 
 	chess::Color oppositeColor(chess::Color);
+	chess::Move getRandomMove(chess::Board& board);
 }

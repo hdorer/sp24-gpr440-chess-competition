@@ -3,7 +3,6 @@
 // disservin's lib. drop a star on his hard work!
 // https://github.com/Disservin/chess-library
 #include "chess.hpp"
-#include <random>
 #include "Utils.h"
 
 
@@ -126,20 +125,5 @@ namespace ChessSimulator {
 			+ ((float)positional / (float)BEST_POSSIBLE_POSITIONAL_SCORE) * positionalWeight
 			+ (((float)numPieces - (float)attackedPieces) / (float)numPieces) * attackWeight
 			+ (float)notInCheck * checkWeight;
-	}
-
-	chess::Move BrainRot::getRandomMove(chess::Board& board) {
-		chess::Movelist moves;
-		chess::movegen::legalmoves(moves, board);
-		if (moves.size() == 0) {
-			return chess::Move();
-		}
-
-		// get random move
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::uniform_int_distribution<> dist(0, moves.size() - 1);
-		chess::Move move = moves[dist(gen)];
-		return move;
 	}
 }

@@ -188,6 +188,16 @@ int main() {
                 continue;
             }
 
+            // extract this to function
+            std::pair<chess::GameResultReason, chess::GameResult> result = board.isGameOver();
+            if (result.second != chess::GameResult::NONE || result.first != chess::GameResultReason::NONE) {
+                std::string resultStr = std::string(magic_enum::enum_name(result.second)) + " " + std::string(magic_enum::enum_name(result.first));
+                std::cout << "GAME OVER: " << resultStr << std::endl;
+                std::cout << "Full PGN: " << pgn << std::endl;
+                return 0;
+            }
+            // /func
+
             brainRotMove(bot, board, pgn);
         }
         else {

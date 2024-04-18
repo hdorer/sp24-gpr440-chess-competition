@@ -10,8 +10,10 @@ namespace ChessSimulator {
 	public:
 		MonteCarloTree(std::string boardFen) : root(boardFen, nullptr) { }
 
-		chess::Move getBestMove();
+		void doMonteCarloTreeSearch();
 	private:
 		TreeNode root;
+
+		float visitNode(TreeNode& node);
 	};
 }
