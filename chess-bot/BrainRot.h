@@ -16,6 +16,7 @@ namespace ChessSimulator {
 		chess::Move getNextMove(chess::Board& board);
 
 		void evaluatePosition(chess::Board& board, float& whiteScore, float& blackScore);
+		void evaluatePosition(chess::Board& board, chess::Color side, float& sideScore, float& oppositeSideScore);
 		float evaluatePosition(chess::Board& board);
 
 	private:

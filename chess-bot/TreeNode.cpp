@@ -1,5 +1,6 @@
 #include "TreeNode.h"
 
+#include "BrainRot.h"
 #include "Utils.h"
 
 
@@ -30,15 +31,33 @@ namespace ChessSimulator {
 		}
 	}
 
-	float TreeNode::playout(int maxMoves) {
+	float TreeNode::playout(BrainRot* bot, int maxMoves) {
 		chess::Board board(boardFen);
+		chess::Color side = board.sideToMove();
 
 		for (int i = 0; i < maxMoves * 2; i++) {
 			board.makeMove(getRandomMove(board));
-			// if(board.isGameOver().second == chess::GameResult::)
+			if (board.isGameOver().second == chess::GameResult::LOSE) {
+				board.makeNullMove();
+				if (board.sideToMove() == side) {
+					return 1.0f;
+				} else {
+					return -1.0f;
+				}
+			} else if (board.isGameOver().second == chess::GameResult::DRAW) {
+				return 0.5f;
+			}
 		}
 
-		return 0.0f;
+		float sideScore, oppositeSideScore;
+		bot->evaluatePosition(board, side, sideScore, oppositeSideScore);
+		if (sideScore > oppositeSideScore) {
+			return 1.0f;
+		} else if (sideScore < oppositeSideScore) {
+			return -1.0f;
+		} else {
+			return 0.5f;
+		}
 	}
 
 	TreeNode& TreeNode::bestChild() {

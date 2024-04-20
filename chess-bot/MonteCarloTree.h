@@ -14,6 +14,6 @@ namespace ChessSimulator {
 	private:
 		TreeNode root;
 
-		float visitNode(TreeNode& node);
+		float visitNode(TreeNode& node, class BrainRot* bot);
 	};
 }

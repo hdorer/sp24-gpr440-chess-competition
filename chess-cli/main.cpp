@@ -78,6 +78,18 @@ bool chooseSide() {
     }
 }
 
+bool isGameOver(chess::Board& board, PGNBuilder& pgn) {
+    std::pair<chess::GameResultReason, chess::GameResult> result = board.isGameOver();
+    if (result.second != chess::GameResult::NONE || result.first != chess::GameResultReason::NONE) {
+        board.makeNullMove();
+        std::string resultStr = std::string(magic_enum::enum_name(result.second)) + " " + std::string(magic_enum::enum_name(result.first));
+        std::cout << "GAME OVER: " << resultStr << " " << board.sideToMove() << std::endl;
+        std::cout << "Full PGN: " << pgn << std::endl;
+        return true;
+    }
+    return false;
+}
+
 void brainRotMove(ChessSimulator::BrainRot& bot, chess::Board& board, PGNBuilder& pgn, bool saySide = false) {
     chess::Move move = bot.getNextMove(board);
     pgn.addMove(board, move);
@@ -94,7 +106,12 @@ void brainRotMove(ChessSimulator::BrainRot& bot, chess::Board& board, PGNBuilder
 
 void setPosition(std::string input, ChessSimulator::BrainRot& bot, chess::Board& board, PGNBuilder& pgn, bool& side) {
     std::string oldFen = board.getFen();
+    if(input.length() < std::string("setposition ").length()) {
+        std::cout << "No FEN provided!" << std::endl;
+        return;
+    }
     std::string fen = input.substr(std::string("setposition ").size());
+    
     board.setFen(fen);
 
     if (board.pieces(chess::PieceType::KING, chess::Color::WHITE) == chess::Bitboard(0) || board.pieces(chess::PieceType::KING, chess::Color::WHITE) == chess::Bitboard(0) || board.inCheck()) {
@@ -188,30 +205,23 @@ int main() {
                 continue;
             }
 
-            // extract this to function
-            std::pair<chess::GameResultReason, chess::GameResult> result = board.isGameOver();
-            if (result.second != chess::GameResult::NONE || result.first != chess::GameResultReason::NONE) {
-                std::string resultStr = std::string(magic_enum::enum_name(result.second)) + " " + std::string(magic_enum::enum_name(result.first));
-                std::cout << "GAME OVER: " << resultStr << std::endl;
-                std::cout << "Full PGN: " << pgn << std::endl;
+            if (isGameOver(board, pgn)) {
                 return 0;
             }
-            // /func
 
             brainRotMove(bot, board, pgn);
+            if (isGameOver(board, pgn)) {
+                return 0;
+            }
         }
         else {
             brainRotMove(bot, board, pgn, true);
+            if (isGameOver(board, pgn)) {
+                return 0;
+            }
+
             side = !side;
             bot.setSide(side);
-        }
-
-        std::pair<chess::GameResultReason, chess::GameResult> result = board.isGameOver();
-        if (result.second != chess::GameResult::NONE || result.first != chess::GameResultReason::NONE) {
-            std::string resultStr = std::string(magic_enum::enum_name(result.second)) + " " + std::string(magic_enum::enum_name(result.first));
-            std::cout << "GAME OVER: " << resultStr << std::endl;
-            std::cout << "Full PGN: " << pgn << std::endl;
-            return 0;
         }
     }
 }

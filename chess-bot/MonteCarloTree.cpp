@@ -1,5 +1,7 @@
 #include "MonteCarloTree.h"
 
+#include "BrainRot.h"
+
 
 namespace ChessSimulator {
 	void MonteCarloTree::doMonteCarloTreeSearch() {
@@ -8,7 +10,7 @@ namespace ChessSimulator {
 		
 	}
 
-	float MonteCarloTree::visitNode(TreeNode& node) {
+	float MonteCarloTree::visitNode(TreeNode& node, BrainRot* bot) {
 		float result;
 		
 		node.expand();
@@ -18,7 +20,7 @@ namespace ChessSimulator {
 		if (bestChild.hasChildren()) {
 			result = visitNode(bestChild);
 		} else {
-			result = bestChild.playout(20);
+			result = bestChild.playout(bot, 20);
 		}
 
 		if (result == 1.0f) {

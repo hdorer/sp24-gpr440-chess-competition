@@ -13,7 +13,7 @@ namespace ChessSimulator {
 
 		void expand();
 		void calculateChildrenUCT();
-		float playout(int maxMoves);
+		float playout(class BrainRot* bot, int maxMoves);
 
 		bool hasChildren() const { return !children.empty(); }
 		TreeNode& bestChild();

@@ -77,6 +77,19 @@ namespace ChessSimulator {
 		blackScore = evaluateForSide(board, chess::Color::BLACK);
 	}
 
+	void BrainRot::evaluatePosition(chess::Board& board, chess::Color color, float& sideScore, float& oppositeSideScore) {
+		float whiteScore, blackScore;
+		evaluatePosition(board, whiteScore, blackScore);
+
+		if (color == chess::Color::WHITE) {
+			sideScore = whiteScore;
+			oppositeSideScore = blackScore;
+		} else if (color == chess::Color::BLACK) {
+			sideScore = blackScore;
+			oppositeSideScore = whiteScore;
+		}
+	}
+
 	float BrainRot::evaluatePosition(chess::Board& board) {
 		return evaluateForSide(board, side);
 	}
