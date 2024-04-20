@@ -7,7 +7,8 @@
 namespace ChessSimulator {
 	class TreeNode {
 	public:
-		TreeNode(std::string fen, TreeNode* parent) : boardFen(fen), parent(parent) { }
+		TreeNode(chess::Board& board, TreeNode* parent) : boardFen(board.getFen()), side(board.sideToMove()), parent(parent), visits(0), wins(0.0f), uct(FLT_MAX) { }
+		TreeNode(std::string boardFen);
 
 		std::vector<TreeNode>& getChildren() { return children; }
 
@@ -16,8 +17,11 @@ namespace ChessSimulator {
 		float playout(class BrainRot* bot, int maxMoves);
 
 		bool hasChildren() const { return !children.empty(); }
+		bool hasBeenVisited() const { return visits > 0; }
 		TreeNode& bestChild();
-		void propagateResult(float result) { wins += result; }
+		void propagateResult(float result);
+
+		std::string toString();
 	private:
 		std::string boardFen;
 		chess::Color side;

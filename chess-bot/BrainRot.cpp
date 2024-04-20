@@ -3,6 +3,7 @@
 // disservin's lib. drop a star on his hard work!
 // https://github.com/Disservin/chess-library
 #include "chess.hpp"
+#include "MonteCarloTree.h"
 #include "Utils.h"
 
 
@@ -69,6 +70,10 @@ namespace ChessSimulator {
 	}
 
 	chess::Move BrainRot::getNextMove(chess::Board& board) {
+		MonteCarloTree tree(board.getFen());
+		std::string bestMoveStr = tree.getBestMove(this);
+		std::cout << bestMoveStr << std::endl;
+		
 		return getRandomMove(board);
 	}
 

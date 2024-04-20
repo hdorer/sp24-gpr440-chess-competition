@@ -8,9 +8,10 @@
 namespace ChessSimulator {
 	class MonteCarloTree {
 	public:
-		MonteCarloTree(std::string boardFen) : root(boardFen, nullptr) { }
+		MonteCarloTree(std::string boardFen) : root(boardFen) { }
 
-		void doMonteCarloTreeSearch();
+		std::string getBestMove(class BrainRot* bot);
+
 	private:
 		TreeNode root;
 

@@ -1,10 +1,22 @@
 #include "TreeNode.h"
 
 #include "BrainRot.h"
+#include <sstream>
 #include "Utils.h"
 
 
 namespace ChessSimulator {
+	TreeNode::TreeNode(std::string boardFen) {
+		chess::Board board(boardFen);
+
+		this->boardFen = boardFen;
+		side = board.sideToMove();
+		parent = nullptr;
+		visits = 0;
+		wins = 0.0f;
+		uct = FLT_MAX;
+	}
+
 	void TreeNode::expand() {
 		if (!children.empty()) {
 			return;
@@ -16,7 +28,7 @@ namespace ChessSimulator {
 
 		for (chess::Move move : legalMoves) {
 			board.makeMove(move);
-			children.push_back(TreeNode(board.getFen(), this));
+			children.push_back(TreeNode(board, this));
 			board.unmakeMove(move);
 		}
 	}
@@ -26,38 +38,43 @@ namespace ChessSimulator {
 			return;
 		}
 
-		for (TreeNode node : children) {
-			node.calculateUCT();
+		for (int i = 0; i < children.size(); i++) {
+			children[i].calculateUCT();
 		}
 	}
 
 	float TreeNode::playout(BrainRot* bot, int maxMoves) {
+		float result;
+
 		chess::Board board(boardFen);
-		chess::Color side = board.sideToMove();
 
 		for (int i = 0; i < maxMoves * 2; i++) {
-			board.makeMove(getRandomMove(board));
 			if (board.isGameOver().second == chess::GameResult::LOSE) {
 				board.makeNullMove();
 				if (board.sideToMove() == side) {
-					return 1.0f;
+					result = 1.0f;
 				} else {
-					return -1.0f;
+					result = -1.0f;
 				}
 			} else if (board.isGameOver().second == chess::GameResult::DRAW) {
-				return 0.5f;
+				result = 0.5f;
+			} else if (board.isGameOver().second == chess::GameResult::NONE) {
+				board.makeMove(getRandomMove(board));
 			}
 		}
 
 		float sideScore, oppositeSideScore;
 		bot->evaluatePosition(board, side, sideScore, oppositeSideScore);
 		if (sideScore > oppositeSideScore) {
-			return 1.0f;
+			result = 1.0f;
 		} else if (sideScore < oppositeSideScore) {
-			return -1.0f;
+			result = -1.0f;
 		} else {
-			return 0.5f;
+			result = 0.5f;
 		}
+
+		propagateResult(result);
+		return result;
 	}
 
 	TreeNode& TreeNode::bestChild() {
@@ -72,6 +89,21 @@ namespace ChessSimulator {
 		}
 
 		return children[bestIndex];
+	}
+
+	void TreeNode::propagateResult(float result) {
+		if (result > 0.0f) {
+			wins += result;
+		}
+		visits++;
+	}
+
+	std::string TreeNode::toString() {
+		std::stringstream result;
+
+		result << "FEN: " << boardFen << "\nWins: " << wins << "\nVisits: " << visits << "\nWin Rate: " << ((wins / (float)visits) * 100.0f);
+
+		return result.str();
 	}
 
 	void TreeNode::calculateUCT() {
