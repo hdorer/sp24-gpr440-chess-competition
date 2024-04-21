@@ -10,7 +10,7 @@ namespace ChessSimulator {
 	public:
 		MonteCarloTree(std::string boardFen) : root(boardFen) { }
 
-		std::string getBestMove(class BrainRot* bot);
+		chess::Move getBestMove(class BrainRot* bot);
 
 	private:
 		TreeNode root;

@@ -12,6 +12,8 @@ namespace ChessSimulator {
 
 		std::vector<TreeNode>& getChildren() { return children; }
 
+		std::string getBoardFen() const { return boardFen; }
+
 		bool expand();
 		void calculateChildrenUCT();
 		TreeNode& bestChild();
