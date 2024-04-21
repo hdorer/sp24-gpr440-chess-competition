@@ -12,14 +12,15 @@ namespace ChessSimulator {
 
 		std::vector<TreeNode>& getChildren() { return children; }
 
-		void expand();
+		bool expand();
 		void calculateChildrenUCT();
+		TreeNode& bestChild();
+
+		bool hasBeenVisited() const { return visits > 0; }
 		float playout(class BrainRot* bot, int maxMoves);
+		void propagateResult(float result);
 
 		bool hasChildren() const { return !children.empty(); }
-		bool hasBeenVisited() const { return visits > 0; }
-		TreeNode& bestChild();
-		void propagateResult(float result);
 
 		std::string toString();
 	private:

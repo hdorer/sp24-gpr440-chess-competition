@@ -15,7 +15,10 @@ namespace ChessSimulator {
 	float MonteCarloTree::visitNode(TreeNode& node, BrainRot* bot) {
 		float result;
 		
-		node.expand();
+		if(!node.expand()) {
+			std::cout << "Couldn't expand node!" << std::endl;
+			return 0.0f;
+		}
 		node.calculateChildrenUCT();
 
 		TreeNode& bestChild = node.bestChild();

@@ -17,20 +17,27 @@ namespace ChessSimulator {
 		uct = FLT_MAX;
 	}
 
-	void TreeNode::expand() {
+	bool TreeNode::expand() {
 		if (!children.empty()) {
-			return;
+			return true;
 		}
 
 		chess::Board board(boardFen);
 		chess::Movelist legalMoves;
 		chess::movegen::legalmoves(legalMoves, board);
+		
+		if(legalMoves.empty()) {
+			std::cout << "No legal moves!" << std::endl;
+			return false;
+		}
 
 		for (chess::Move move : legalMoves) {
 			board.makeMove(move);
 			children.push_back(TreeNode(board, this));
 			board.unmakeMove(move);
 		}
+
+		return true;
 	}
 
 	void TreeNode::calculateChildrenUCT() {
@@ -41,6 +48,25 @@ namespace ChessSimulator {
 		for (int i = 0; i < children.size(); i++) {
 			children[i].calculateUCT();
 		}
+	}
+
+	TreeNode& TreeNode::bestChild() {
+		if(children.empty()) {
+			std::cout << "children was empty in bestChild()--that's not supposed to happen!" << std::endl;
+			expand();
+		}
+
+		int bestIndex = 0;
+		float bestUCT = -FLT_MAX;
+
+		for(int i = 0; i < children.size(); i++) {
+			if(children[i].uct > bestUCT) {
+				bestIndex = i;
+				bestUCT = children[i].uct;
+			}
+		}
+
+		return children[bestIndex];
 	}
 
 	float TreeNode::playout(BrainRot* bot, int maxMoves) {
@@ -79,25 +105,6 @@ namespace ChessSimulator {
 
 		propagateResult(result);
 		return result;
-	}
-
-	TreeNode& TreeNode::bestChild() {
-		if (children.empty()) {
-			std::cout << "children was empty in bestChild()--that's not supposed to happen!" << std::endl;
-			expand();
-		}
-
-		int bestIndex = 0;
-		float bestUCT = -FLT_MAX;
-
-		for (int i = 0; i < children.size(); i++) {
-			if (children[i].uct > bestUCT) {
-				bestIndex = i;
-				bestUCT = children[i].uct;
-			}
-		}
-
-		return children[bestIndex];
 	}
 
 	void TreeNode::propagateResult(float result) {
