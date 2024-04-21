@@ -51,13 +51,17 @@ namespace ChessSimulator {
 		for (int i = 0; i < maxMoves * 2; i++) {
 			if (board.isGameOver().second == chess::GameResult::LOSE) {
 				board.makeNullMove();
+				
 				if (board.sideToMove() == side) {
 					result = 1.0f;
 				} else {
 					result = -1.0f;
 				}
+				
+				break;
 			} else if (board.isGameOver().second == chess::GameResult::DRAW) {
 				result = 0.5f;
+				break;
 			} else if (board.isGameOver().second == chess::GameResult::NONE) {
 				board.makeMove(getRandomMove(board));
 			}
