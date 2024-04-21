@@ -27,7 +27,6 @@ namespace ChessSimulator {
 		chess::movegen::legalmoves(legalMoves, board);
 		
 		if(legalMoves.empty()) {
-			std::cout << "No legal moves!" << std::endl;
 			return false;
 		}
 
@@ -51,11 +50,6 @@ namespace ChessSimulator {
 	}
 
 	TreeNode& TreeNode::bestChild() {
-		if(children.empty()) {
-			std::cout << "children was empty in bestChild()--that's not supposed to happen!" << std::endl;
-			expand();
-		}
-
 		int bestIndex = 0;
 		float bestUCT = -FLT_MAX;
 
@@ -75,21 +69,11 @@ namespace ChessSimulator {
 		chess::Board board(boardFen);
 
 		for (int i = 0; i < maxMoves * 2; i++) {
-			if (board.isGameOver().second == chess::GameResult::LOSE) {
-				board.makeNullMove();
-				
-				if (board.sideToMove() == side) {
-					result = 1.0f;
-				} else {
-					result = -1.0f;
-				}
-				
-				break;
-			} else if (board.isGameOver().second == chess::GameResult::DRAW) {
-				result = 0.5f;
-				break;
-			} else if (board.isGameOver().second == chess::GameResult::NONE) {
+			if(board.isGameOver().second == chess::GameResult::NONE) {
 				board.makeMove(getRandomMove(board));
+			} else {
+				result = boardResult(board);
+				break;
 			}
 		}
 
@@ -105,6 +89,11 @@ namespace ChessSimulator {
 
 		propagateResult(result);
 		return result;
+	}
+
+	float TreeNode::boardResult() {
+		chess::Board board(boardFen);
+		return boardResult(board);
 	}
 
 	void TreeNode::propagateResult(float result) {
@@ -127,6 +116,20 @@ namespace ChessSimulator {
 			uct = (wins / (float)visits) + sqrt(2) * sqrt(log((float)parent->visits) / (float)visits);
 		} else {
 			uct = FLT_MAX;
+		}
+	}
+
+	float TreeNode::boardResult(chess::Board& board) {
+		if(board.isGameOver().second == chess::GameResult::LOSE) {
+			board.makeNullMove();
+
+			if(board.sideToMove() == side) {
+				return 1.0f;
+			} else {
+				return -1.0f;
+			}
+		} else if(board.isGameOver().second == chess::GameResult::DRAW) {
+			return 0.5f;
 		}
 	}
 }

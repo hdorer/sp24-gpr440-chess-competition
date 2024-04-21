@@ -18,6 +18,7 @@ namespace ChessSimulator {
 
 		bool hasBeenVisited() const { return visits > 0; }
 		float playout(class BrainRot* bot, int maxMoves);
+		float boardResult();
 		void propagateResult(float result);
 
 		bool hasChildren() const { return !children.empty(); }
@@ -34,5 +35,6 @@ namespace ChessSimulator {
 		std::vector<TreeNode> children;
 
 		void calculateUCT();
+		float boardResult(chess::Board& board);
 	};
 }

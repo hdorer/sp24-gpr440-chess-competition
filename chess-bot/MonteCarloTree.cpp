@@ -5,7 +5,7 @@
 
 namespace ChessSimulator {
 	std::string MonteCarloTree::getBestMove(BrainRot* bot) {
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 100; i++) {
 			visitNode(root, bot);
 		}
 
@@ -16,8 +16,7 @@ namespace ChessSimulator {
 		float result;
 		
 		if(!node.expand()) {
-			std::cout << "Couldn't expand node!" << std::endl;
-			return 0.0f;
+			result = node.boardResult();
 		}
 		node.calculateChildrenUCT();
 
