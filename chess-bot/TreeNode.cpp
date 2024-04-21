@@ -82,6 +82,11 @@ namespace ChessSimulator {
 	}
 
 	TreeNode& TreeNode::bestChild() {
+		if (children.empty()) {
+			std::cout << "children was empty in bestChild()--that's not supposed to happen!" << std::endl;
+			expand();
+		}
+
 		int bestIndex = 0;
 		float bestUCT = -FLT_MAX;
 
