@@ -49,7 +49,7 @@ namespace ChessSimulator {
 		}
 	}
 
-	TreeNode& TreeNode::bestChild() {
+	TreeNode* TreeNode::bestChild() {
 		int bestIndex = 0;
 		float bestUCT = -FLT_MAX;
 
@@ -60,7 +60,25 @@ namespace ChessSimulator {
 			}
 		}
 
-		return children[bestIndex];
+		return &(children[bestIndex]);
+	}
+
+	TreeNode* TreeNode::firstUnvisitedChild() {
+		for (int i = 0; i < children.size(); i++) {
+			if (!children[i].hasBeenVisited()) {
+				return &(children[i]);
+			}
+		}
+	}
+
+	bool TreeNode::allChildrenVisited() {
+		for (int i = 0; i < children.size(); i++) {
+			if(!children[i].hasBeenVisited()) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	float TreeNode::playout(BrainRot* bot, int maxMoves) {
@@ -68,7 +86,7 @@ namespace ChessSimulator {
 
 		chess::Board board(boardFen);
 
-		for (int i = 0; i < maxMoves * 2; i++) {
+		while (true) {
 			if(board.isGameOver().second == chess::GameResult::NONE) {
 				board.makeMove(getRandomMove(board));
 			} else {
@@ -77,7 +95,7 @@ namespace ChessSimulator {
 			}
 		}
 
-		float sideScore, oppositeSideScore;
+		/*float sideScore, oppositeSideScore;
 		bot->evaluatePosition(board, side, sideScore, oppositeSideScore);
 		if (sideScore > oppositeSideScore) {
 			result = 1.0f;
@@ -85,7 +103,7 @@ namespace ChessSimulator {
 			result = -1.0f;
 		} else {
 			result = 0.5f;
-		}
+		}*/
 
 		propagateResult(result);
 		return result;

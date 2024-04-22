@@ -16,9 +16,11 @@ namespace ChessSimulator {
 
 		bool expand();
 		void calculateChildrenUCT();
-		TreeNode& bestChild();
+		TreeNode* bestChild();
+		TreeNode* firstUnvisitedChild();
 
 		bool hasBeenVisited() const { return visits > 0; }
+		bool allChildrenVisited();
 		float playout(class BrainRot* bot, int maxMoves);
 		float boardResult();
 		void propagateResult(float result);
