@@ -1,6 +1,7 @@
 #include "MonteCarloTree.h"
 
 #include "BrainRot.h"
+#include <cmath>
 
 
 namespace ChessSimulator {
