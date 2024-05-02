@@ -52,6 +52,20 @@ namespace ChessSimulator {
 
 	TreeNode* TreeNode::bestChild() {
 		int bestIndex = 0;
+		float bestWins = -INT_MAX;
+
+		for (int i = 0; i < children.size(); i++) {
+			if (children[i].wins > bestWins) {
+				bestIndex = i;
+				bestWins = children[i].wins;
+			}
+		}
+
+		return &(children[bestIndex]);
+	}
+
+	TreeNode* TreeNode::mostPromisingChild() {
+		int bestIndex = 0;
 		float bestUCT = -FLT_MAX;
 
 		for(int i = 0; i < children.size(); i++) {

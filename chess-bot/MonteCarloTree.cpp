@@ -38,7 +38,7 @@ namespace ChessSimulator {
 			if (!node->allChildrenVisited()) {
 				next = node->firstUnvisitedChild();
 			} else {
-				next = node->bestChild();
+				next = node->mostPromisingChild();
 			}
 			
 			if (next->hasBeenVisited()) {

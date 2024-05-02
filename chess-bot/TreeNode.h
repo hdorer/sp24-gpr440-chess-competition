@@ -18,6 +18,7 @@ namespace ChessSimulator {
 		bool expand();
 		void calculateChildrenUCT();
 		TreeNode* bestChild();
+		TreeNode* mostPromisingChild();
 		TreeNode* firstUnvisitedChild();
 
 		bool hasBeenVisited() const { return visits > 0; }
