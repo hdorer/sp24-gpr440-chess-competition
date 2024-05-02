@@ -16,6 +16,11 @@ std::string ChessSimulator::Move(std::string fen) {
 
     // here goes a random movement
     chess::Board board(fen);
+
+    if (board.isGameOver().second != chess::GameResult::NONE) {
+        return "";
+    }
+
     BrainRot bot;
     return chess::uci::moveToUci(bot.getNextMove(board));
 }
