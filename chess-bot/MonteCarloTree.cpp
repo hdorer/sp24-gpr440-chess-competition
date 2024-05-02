@@ -23,6 +23,8 @@ namespace ChessSimulator {
 			}
 			board.unmakeMove(legalMoves[i]);
 		}
+
+		return legalMoves[0];
 	}
 
 	float MonteCarloTree::visitNode(TreeNode* node, BrainRot* bot) {
